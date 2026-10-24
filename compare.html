@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Four ways to build an instruction hierarchy &mdash; Instruction hierarchy, mapped</title>
+<meta name="description" content="Fixed tiers, many tiers, reasoning and architecture compared: where each instruction-hierarchy approach puts the rank, who assigns it, what it costs, and what it leaves open." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="paper.css" />
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+  <div class="brand"><span class="dot"></span>INSTRUCTION&nbsp;HIERARCHY&nbsp;//&nbsp;FIELD&nbsp;MAP</div>
+  <a class="back" href="index.html#compare">&larr; field map</a>
+</div></header>
+<main>
+  <div class="eyebrow"><span class="box wb mono">THE COMPARISON &middot; 07</span><span class="mono">all four papers &middot; plus the two-level defenses</span></div>
+  <h1>Four ways to build an instruction hierarchy</h1>
+  <div class="authors">Where the rank lives, who assigns it, what it costs, and what each leaves open</div>
+
+  <div class="tldr"><b>TL;DR &mdash;</b> All four approaches want the same behavior: obey lower-ranked instructions when they agree with higher-ranked ones, ignore them when they conflict. They differ in where the rank is stored. <b>Fixed tiers</b> (Wallace et al.) store it in training data tied to message roles. <b>Architecture</b> (ISE) stores it in a per-token embedding. <b>Reasoning</b> (VerIH) stores it in the system prompt and trains the model to think about it. <b>Many tiers</b> (ManyIH) stores it in tags written into the prompt, with as many levels as the deployment needs. They are not rivals so much as layers: you could train with conflicts, add segment embeddings, reward reasoning, and accept per-instruction tags. The benchmarks are different, so the headline numbers do not compare across papers.</div>
+
+  <h2 id="table">Side by side</h2>
+<!--FIG:axes--><figure class="fig"><button type="button" class="media" aria-label="Enlarge figure: A two-axis sketch. Horizontal: number of tiers. Vertical: where rank lives, from training data, to architecture, to the prompt. StruQ and SecAlign: 2 tiers, data. Wallace et al.: fixed 3 tiers, data. ISE: fixed 4, architecture. VerIH: 2 tiers plus tool, prompt and reasoning. ManyIH: up to 12, prompt. The many-tier, trained-reasoning corner is empty."><svg class="dg" viewBox="0 0 400 300" role="img" aria-label="A two-axis sketch. Horizontal: number of tiers. Vertical: where rank lives, from training data, to architecture, to the prompt. StruQ and SecAlign: 2 tiers, data. Wallace et al.: fixed 3 tiers, data. ISE: fixed 4, architecture. VerIH: 2 tiers plus tool, prompt and reasoning. ManyIH: up to 12, prompt. The many-tier, trained-reasoning corner is empty."><title>A two-axis sketch. Horizontal: number of tiers. Vertical: where rank lives, from training data, to architecture, to the prompt. StruQ and SecAlign: 2 tiers, data. Wallace et al.: fixed 3 tiers, data. ISE: fixed 4, architecture. VerIH: 2 tiers plus tool, prompt and reasoning. ManyIH: up to 12, prompt. The many-tier, trained-reasoning corner is empty.</title><line class="ln" x1="50" y1="260" x2="380" y2="260"/><line class="ln" x1="50" y1="260" x2="50" y2="20"/><polygon class="ah" points="380.0,260.0 372.8,263.5 372.8,256.5"/><polygon class="ah" points="50.0,20.0 53.5,27.2 46.5,27.2"/><text x="215" y="290" class="t-dim" font-size="11" text-anchor="middle">number of tiers →</text><text x="18" y="140" class="t-dim" font-size="11" text-anchor="middle" transform="rotate(-90 18 140)">rank lives in… (data → architecture → prompt)</text><rect class="box-def" x="35" y="193" width="120" height="34" rx="7"/><text x="95" y="208" class="t-def" font-size="11" text-anchor="middle" font-weight="600">Wallace et al.</text><text x="95" y="222" class="t-dim" font-size="10" text-anchor="middle">fixed 3</text><rect class="box-def" x="35" y="123" width="120" height="34" rx="7"/><text x="95" y="138" class="t-def" font-size="11" text-anchor="middle" font-weight="600">ISE</text><text x="95" y="152" class="t-dim" font-size="10" text-anchor="middle">fixed 4</text><rect class="box-off" x="65" y="53" width="120" height="34" rx="7"/><text x="125" y="68" class="t-off" font-size="11" text-anchor="middle" font-weight="600">VerIH</text><text x="125" y="82" class="t-dim" font-size="10" text-anchor="middle">2 (+tool)</text><rect class="box-crit" x="245" y="53" width="120" height="34" rx="7"/><text x="305" y="68" class="t-crit" font-size="11" text-anchor="middle" font-weight="600">ManyIH</text><text x="305" y="82" class="t-dim" font-size="10" text-anchor="middle">up to 12</text><rect class="box" x="35" y="223" width="120" height="34" rx="7"/><text x="95" y="238" class="t-mid" font-size="11" text-anchor="middle" font-weight="600">StruQ / SecAlign</text><text x="95" y="252" class="t-dim" font-size="10" text-anchor="middle">2</text><text x="305" y="120" class="t-dim" font-size="10.5" text-anchor="middle">nobody yet: trained</text><text x="305" y="135" class="t-dim" font-size="10.5" text-anchor="middle">reasoning over many tiers</text><rect class="box" x="245" y="108" width="120" height="34" rx="7"/></svg></button><figcaption>Where each approach sits. This map's own sketch, not a figure from any paper; the empty box is the open corner.</figcaption></figure><!--/FIG-->
+  <div class="scroll"><table class="kv">
+    <tr><th></th><th>Fixed tiers</th><th>Architecture</th><th>Reasoning</th><th>Many tiers</th></tr>
+    <tr><td class="mono">Paper</td><td><a class="lnk" href="paper/instruction-hierarchy.html">Wallace et al. 2024</a></td><td><a class="lnk" href="paper/segment-embedding.html">Wu et al. 2025 (ISE)</a></td><td><a class="lnk" href="paper/reasoning-ladder.html">Zheng et al. (VerIH)</a></td><td><a class="lnk" href="paper/many-tier.html">Zhang et al. 2026 (ManyIH)</a></td></tr>
+    <tr><td class="mono">Where rank lives</td><td>Message role, learned from data</td><td>A learned embedding added to every token</td><td>The system prompt, read by a model trained to reason about precedence</td><td>Privilege tags in the text, per instruction</td></tr>
+    <tr><td class="mono">Levels</td><td>3 used (system, user, tool), 4 in the prompting baseline</td><td>4 by default (system, user, data, output)</td><td>2 trained (system, user), tool tested</td><td>Arbitrary; up to 12 in the benchmark</td></tr>
+    <tr><td class="mono">Who assigns rank</td><td>Chat format (role tokens)</td><td>Application, per token</td><td>Chat format</td><td>Harness, per instruction, at inference</td></tr>
+    <tr><td class="mono">Training</td><td>SFT + RLHF on synthetic aligned/misaligned data</td><td>SFT with the extra embedding</td><td>GRPO with verifiable rewards on 7,192 examples</td><td>None proposed; a benchmark</td></tr>
+    <tr><td class="mono">Models</td><td>GPT-3.5 Turbo</td><td>Llama-2-13B, Llama-3(.1)-8B</td><td>Qwen3 4B&ndash;35B, Phi-4-mini-reasoning</td><td>13 frontier and open models, evaluated</td></tr>
+    <tr><td class="mono">Headline</td><td>System-prompt extraction robustness 32.8 &rarr; 95.9%</td><td>Average injection robustness +15.75 points (Structured Query)</td><td>IHEval conflicts roughly +20 points</td><td>Best model 42.7% overall</td></tr>
+    <tr><td class="mono">Main cost</td><td>Over-refusal on attack-shaped benign prompts</td><td>Needs architecture access and retraining</td><td>Extra reasoning tokens on every request</td><td>Privilege text can be forged if not escaped</td></tr>
+    <tr><td class="mono">Leaves open</td><td>Tool text the user wants followed; more tiers</td><td>Adaptive jailbreaks (0&ndash;4% robust)</td><td>Many levels; grading the reasoning</td><td>How to assign privilege; adversarial tags</td></tr>
+  </table></div>
+  <p>The <a class="lnk" href="paper/data-channel.html">StruQ and SecAlign</a> defenses are the two-level special case (instruction and data, data never obeyed) and add one property the others mostly lack: delimiters an attacker cannot type.</p>
+
+  <h2 id="axes">Two axes that are easy to conflate</h2>
+  <p><b>How many tiers</b> and <b>how the model decides</b> are separate questions. ManyIH's reasoning-effort experiment makes the point: more thinking helps GPT-5.4 a lot (15.5% to 60.9% on coding) but saturates, and verbose reasoners do no better than concise ones. VerIH shows reasoning helps at two tiers; ManyIH shows two-tier skill does not carry over to twelve. Nobody has yet trained a model to reason over many tiers and published the result.</p>
+  <p>Likewise <b>where rank lives</b> and <b>who assigns it</b> are separate. ISE and ManyIH both take rank from outside the model; ISE in a channel the attacker cannot touch (an embedding index), ManyIH in one the attacker can (text). Wallace et al. and VerIH leave it in role tokens, which are safe from forgery but coarse.</p>
+
+  <h2 id="overrefusal">The shared trap: over-refusal</h2>
+  <p>A hierarchy is trivially satisfied by obeying nothing below the top. Every paper therefore pairs robustness with a measure of compliance on benign instructions, and every paper finds some tension:</p>
+  <ul>
+    <li>Wallace et al.: compliance on jailbreak-shaped but harmless prompts falls from 83.1% to 60.4%.</li>
+    <li>ISE: benign compliance rises for one training set and dips slightly for two.</li>
+    <li>VerIH: WildJailbreak benign stays high (99.20% to 97.60% for Qwen3-8B), but Phi-4-mini shows the rejection/over-rejection trade-off on TensorTrust.</li>
+    <li>ManyIH scores this directly: a winning lower-priority instruction that is ignored fails the sample.</li>
+  </ul>
+  <p>Our reading: "aligned or misaligned" is the hard judgment in every approach. Ranking is easy; deciding whether a lower-ranked instruction is compatible with a higher one is where errors come from in both directions.</p>
+
+  <h2 id="assumption">The assumption every paper makes</h2>
+  <p>Each approach assumes that something trustworthy has already labeled each piece of text with its source: the chat template, the application's segment IDs, the harness's privilege tags. None of the papers studies how that labeling should be done. ManyIH says so explicitly and lists options (provenance, runtime reputation, optimization). The Model Spec answers in prose (an AGENTS.md beats a downloaded text file; a random web page gets no trust). That open question is where the three sibling maps come in:</p>
+  <ul>
+    <li>Contextual integrity says rank alone is the wrong unit; the question is whether a <em>flow</em> fits the norms of its context (<a class="lnk" href="bridge/contextual-integrity.html">bridge</a>).</li>
+    <li>Claude's constitution assigns trust by role and responsibility, with exceptions in both directions (<a class="lnk" href="bridge/constitution.html">bridge</a>).</li>
+    <li>Memory is a source none of the hierarchies names (<a class="lnk" href="bridge/memory.html">bridge</a>).</li>
+  </ul>
+  <div class="callout">If you remember one thing: these are four places to put the same ranking, not four competing rankings. A production system will likely use several, and its weakest link is whichever component decides which text gets which rank.</div>
+
+  <div class="callout">Next: <a class="lnk" href="bridge/contextual-integrity.html">Instruction hierarchy &times; contextual integrity</a> &middot; Back to the <a class="lnk" href="index.html#compare">map</a>.</div>
+</main>
+<footer>
+  Part of <a href="index.html">Instruction hierarchy, mapped</a>. Figures quoted here appear with their sources on each paper's page.
+</footer>
+<script src="fig.js" defer></script>
+</body>
+</html>

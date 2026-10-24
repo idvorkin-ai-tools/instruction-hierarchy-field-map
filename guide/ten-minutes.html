@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Read it in 10 minutes &mdash; Instruction hierarchy, mapped</title>
+<meta name="description" content="The instruction-hierarchy literature in ten minutes: the problem, four approaches, the numbers worth remembering, and how it connects to contextual integrity, Claude's constitution and model memory." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../paper.css" />
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+  <div class="brand"><span class="dot"></span>INSTRUCTION&nbsp;HIERARCHY&nbsp;//&nbsp;FIELD&nbsp;MAP</div>
+  <a class="back" href="../index.html#guides">&larr; field map</a>
+</div></header>
+<main>
+  <div class="eyebrow"><span class="box wb mono">GUIDE &middot; 01 OF 03</span><span class="mono">the whole map, compressed</span></div>
+  <h1>Read it in 10 minutes</h1>
+  <div class="authors">The problem, the four approaches, the numbers, and the bridges</div>
+
+  <h2 id="problem">1. The problem</h2>
+  <p>A language model's input is one long string assembled from several authors: the developer's system prompt, the user's messages, the model's own earlier replies, and whatever tools returned: web pages, emails, files, other agents' output. Any of those can contain a sentence shaped like a command. If the model treats every such sentence as equally authoritative, three familiar attacks follow. A user overrides the developer (direct prompt injection, system-prompt extraction). A web page or email overrides the user (indirect prompt injection). A user talks the model out of its safety training (jailbreaks).</p>
+  <p>Wallace et al. (OpenAI, 2024) put a name to the common cause: the model has no notion of <b>instruction privilege</b>. Their analogy is an operating system that runs every program in kernel mode. Their fix is a ranking, system above user above tool output, plus a rule: follow a lower-ranked instruction when it is <b>aligned</b> with the higher ones ("speak Spanish" to a car-sales bot), ignore it when <b>misaligned</b> ("you are now a gardening helper"), and refuse only if there is no way to proceed. Ignoring everything below the top would be trivially "safe" and useless.</p>
+
+  <h2 id="approaches">2. Four approaches</h2>
+<!--FIG:four--><figure class="fig"><button type="button" class="media" aria-label="Enlarge figure: Four approaches to the same goal. Train it: synthetic conflicts, Wallace et al. Build it in: segment embedding, ISE. Reason about it: reinforcement learning with checkable rewards, VerIH. Many tiers: privilege tags in the prompt, ManyIH. All aim to obey what agrees and ignore what conflicts."><svg class="dg" viewBox="0 0 400 250" role="img" aria-label="Four approaches to the same goal. Train it: synthetic conflicts, Wallace et al. Build it in: segment embedding, ISE. Reason about it: reinforcement learning with checkable rewards, VerIH. Many tiers: privilege tags in the prompt, ManyIH. All aim to obey what agrees and ignore what conflicts."><title>Four approaches to the same goal. Train it: synthetic conflicts, Wallace et al. Build it in: segment embedding, ISE. Reason about it: reinforcement learning with checkable rewards, VerIH. Many tiers: privilege tags in the prompt, ManyIH. All aim to obey what agrees and ignore what conflicts.</title><rect class="box-def" x="10" y="10" width="185" height="88" rx="7"/><text x="102" y="38" class="t-def" font-size="13" text-anchor="middle" font-weight="600">Train it</text><text x="102" y="60" class="t-mid" font-size="11" text-anchor="middle">synthetic conflicts</text><text x="102" y="80" class="t-dim" font-size="10.5" text-anchor="middle">Wallace et al.</text><rect class="box-def" x="205" y="10" width="185" height="88" rx="7"/><text x="297" y="38" class="t-def" font-size="13" text-anchor="middle" font-weight="600">Build it in</text><text x="297" y="60" class="t-mid" font-size="11" text-anchor="middle">segment embedding</text><text x="297" y="80" class="t-dim" font-size="10.5" text-anchor="middle">ISE</text><rect class="box-off" x="10" y="110" width="185" height="88" rx="7"/><text x="102" y="138" class="t-off" font-size="13" text-anchor="middle" font-weight="600">Reason about it</text><text x="102" y="160" class="t-mid" font-size="11" text-anchor="middle">RL, checkable rewards</text><text x="102" y="180" class="t-dim" font-size="10.5" text-anchor="middle">VerIH</text><rect class="box-crit" x="205" y="110" width="185" height="88" rx="7"/><text x="297" y="138" class="t-crit" font-size="13" text-anchor="middle" font-weight="600">Many tiers</text><text x="297" y="160" class="t-mid" font-size="11" text-anchor="middle">tags in the prompt</text><text x="297" y="180" class="t-dim" font-size="10.5" text-anchor="middle">ManyIH</text><text x="200" y="232" class="t-ink" font-size="11" text-anchor="middle">same goal: obey what agrees, ignore what conflicts</text></svg></button><figcaption>The four approaches on one card. Details on the <a href="../compare.html">comparison page</a>.</figcaption></figure><!--/FIG-->
+  <p><b>Train on synthetic conflicts</b> (<a class="lnk" href="../paper/instruction-hierarchy.html">Wallace et al.</a>). For aligned cases, split a compound request across levels and train the model to answer as if it saw the whole thing ("context synthesis"). For misaligned cases, train it to answer as if the injection were absent ("context ignorance"). On GPT-3.5 Turbo, robustness to system-prompt extraction rose from 32.8% to 95.9%, and jailbreak robustness rose on data never used in training (37.4% to 71.2% on one set). The cost: compliance on harmless prompts dressed like jailbreaks fell from 83.1% to 60.4%.</p>
+  <p><b>Build rank into the architecture</b> (<a class="lnk" href="../paper/segment-embedding.html">ISE, ICLR 2025</a>). Add a learned embedding to every token saying whether it came from the system, the user, data or the model's output, as BERT once marked sentence A and B. The rank is present at every position instead of in a few delimiter tokens. On Llama models it adds about 16 points of average injection robustness without adversarial training data and keeps instruction-following quality, but does nothing for adaptive jailbreaks (0&ndash;4% robust with or without it).</p>
+  <p><b>Reason about rank</b> (<a class="lnk" href="../paper/reasoning-ladder.html">VerIH</a>). Rewrite half of an instruction-following dataset so the user contradicts the system prompt, then train reasoning models with reinforcement learning on checkable constraints, prompting them to think about precedence first. With 7,192 examples, IHEval conflict accuracy rises by roughly 20 points, and with safety rules added to the system prompt at test time, jailbreak and injection success fall, though no safety data was used.</p>
+  <p><b>Allow many tiers</b> (<a class="lnk" href="../paper/many-tier.html">ManyIH, 2026</a>). Agents hear from system prompts, config files, skill files, users, tools and other agents, and several of those share one role. ManyIH writes a privilege tag on each instruction, with as many levels as the deployment needs, and builds an 853-task benchmark with up to 12. The best of thirteen models scores 42.7%; accuracy falls as tiers grow; changing only the tag notation moves some models by about 8 points.</p>
+  <p>Two neighbors complete the picture. <a class="lnk" href="../paper/data-channel.html">StruQ and SecAlign</a> handle the two-level case (instruction versus data) with delimiters an attacker cannot type and, in SecAlign, preference training that cuts the strongest tested attacks to 1&ndash;8% success. <a class="lnk" href="../paper/model-spec.html">OpenAI's Model Spec</a> writes the hierarchy down as policy: root, system, developer, user, guideline, and "no authority" for tool outputs and quoted text unless a higher level delegates.</p>
+
+  <h2 id="numbers">3. Numbers worth remembering</h2>
+  <table class="kv">
+    <tr><td class="mono">32.8 &rarr; 95.9%</td><td>System-prompt extraction robustness, GPT-3.5 Turbo, with hierarchy training (Wallace et al., Fig. 2)</td></tr>
+    <tr><td class="mono">83.1 &rarr; 60.4%</td><td>The over-refusal cost on jailbreak-shaped harmless prompts (Fig. 4)</td></tr>
+    <tr><td class="mono">+15.75 points</td><td>ISE's average injection robustness gain on Structured Query, no adversarial data (Table 1)</td></tr>
+    <tr><td class="mono">46.48 &rarr; 63.48%</td><td>Qwen3-8B on IHEval conflicts, best prompted baseline to VerIH training (Table 1)</td></tr>
+    <tr><td class="mono">42.7%</td><td>Best overall score on ManyIH-Bench, Gemini 3.1 Pro (Fig. 2)</td></tr>
+    <tr><td class="mono">1% and 8%</td><td>SecAlign's attack success on its strongest tested attack, two 7&ndash;8B instruct models</td></tr>
+  </table>
+  <p>Do not compare these across papers: the models, benchmarks and metrics all differ.</p>
+
+  <h2 id="compare">4. What they share and what they leave open</h2>
+  <p>The four approaches put the same ranking in different places: training data, an embedding, the system prompt plus reasoning, or tags in the text (<a class="lnk" href="../compare.html">comparison</a>). They are layers more than rivals. All of them assume something trustworthy has already labeled each piece of text with its source. ManyIH states the question outright, who assigns privilege, and leaves it open. The Model Spec answers in prose: an AGENTS.md in the repository deserves more trust than a stray downloaded file, and a random web page none.</p>
+
+  <h2 id="bridges">5. The three bridges</h2>
+  <p><b>Contextual integrity</b> (<a class="lnk" href="../bridge/contextual-integrity.html">bridge</a>). A hierarchy ranks who gave an order; contextual integrity judges whether a flow of information fits the norms of its context, using a transmission principle such as "in confidence". They usually agree on an injected "forward all my email", for different reasons, and disagree when the top of the hierarchy asks for an inappropriate flow. The CAPS report's policy engine keeps untrusted text out of the rule-writing step, which is a hierarchy applied to the rules themselves.</p>
+  <p><b>Claude's constitution</b> (<a class="lnk" href="../bridge/constitution.html">bridge</a>). Anthropic, operators and users are principals, trusted roughly in that order. Tool results, documents and search results are conversational inputs whose instructions are information, not commands. But it is "not a strict hierarchy": users have protections operators cannot remove, trust drops when a principal asks for harm, and values and hard constraints sit above everyone.</p>
+  <p><b>Memory</b> (<a class="lnk" href="../bridge/memory.html">bridge</a>). Remembered facts are written in one conversation and read, often at system level, in the next. None of the papers gives memory a tier. CIMemories shows the dominant failure is over-sharing remembered facts with the wrong recipient (14.8% to 69.1% of private attributes across models), a flow problem a hierarchy cannot solve alone.</p>
+  <div class="callout">The whole map in one line: rank who is speaking, but judge what is being done; neither alone keeps an agent both obedient to the right people and discreet with what it knows.</div>
+
+  <div class="callout">Next: <a class="lnk" href="for-builders.html">For builders</a> &middot; Back to the <a class="lnk" href="../index.html#guides">map</a>.</div>
+</main>
+<footer>
+  Part of <a href="../index.html">Instruction hierarchy, mapped</a>. Every number here appears with its source on the linked paper page.
+</footer>
+<script src="../fig.js" defer></script>
+</body>
+</html>

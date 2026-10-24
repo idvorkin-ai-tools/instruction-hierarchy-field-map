@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Glossary &mdash; Instruction hierarchy, mapped</title>
+<meta name="description" content="Terms from the instruction-hierarchy papers and their bridges: privilege, aligned and misaligned instructions, context synthesis and ignorance, prompt injection, segment embedding, RLVR, privilege prompt interface, principal, conversational input, transmission principle." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../paper.css" />
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+  <div class="brand"><span class="dot"></span>INSTRUCTION&nbsp;HIERARCHY&nbsp;//&nbsp;FIELD&nbsp;MAP</div>
+  <a class="back" href="../index.html#guides">&larr; field map</a>
+</div></header>
+<main>
+  <div class="eyebrow"><span class="box wb mono">GUIDE &middot; 03 OF 03</span><span class="mono">terms from all the papers</span></div>
+  <h1>Glossary</h1>
+  <div class="authors">Short definitions, each linked to the page that explains it in context</div>
+
+  <h2 id="core">The hierarchy</h2>
+  <table class="kv">
+    <tr id="ih"><td class="mono">Instruction hierarchy</td><td>A ranking of instruction sources plus a rule for conflicts: follow lower-ranked instructions that agree with higher-ranked ones, ignore those that conflict (<a class="lnk" href="../paper/instruction-hierarchy.html">Wallace et al.</a>).</td></tr>
+    <tr id="privilege"><td class="mono">Privilege</td><td>An instruction's level of authority, derived from how much the system trusts its source.</td></tr>
+    <tr id="instruction"><td class="mono">Instruction</td><td>In ManyIH, the smallest unit of command; one message can hold several with different privileges (<a class="lnk" href="../paper/many-tier.html#problem">ManyIH</a>).</td></tr>
+    <tr id="tiers"><td class="mono">Tier</td><td>One distinct privilege level; the number of tiers in an input is the number of distinct levels present.</td></tr>
+    <tr id="aligned"><td class="mono">Aligned instruction</td><td>A lower-ranked instruction with the same goals or constraints as the higher ones; should be followed ("speak Spanish" to a car-sales bot).</td></tr>
+    <tr id="misaligned"><td class="mono">Misaligned instruction</td><td>A lower-ranked instruction that opposes, or is orthogonal to, the higher ones; ignore it, or refuse if there is no way to proceed (<a class="lnk" href="../paper/instruction-hierarchy.html#rule">the rule</a>).</td></tr>
+    <tr id="over-refusal"><td class="mono">Over-refusal</td><td>Ignoring or refusing benign lower-ranked instructions; the cost every approach measures (<a class="lnk" href="../compare.html#overrefusal">comparison</a>).</td></tr>
+    <tr id="open-closed"><td class="mono">Open / closed domain</td><td>Open-domain apps (a chat assistant) can have aligned user instructions; closed-domain tasks (summarize, translate) treat all user input as data.</td></tr>
+  </table>
+
+  <h2 id="attacks">Attacks</h2>
+  <table class="kv">
+    <tr id="direct"><td class="mono">Direct prompt injection</td><td>The end user inserts instructions that subvert the developer's.</td></tr>
+    <tr id="indirect"><td class="mono">Indirect prompt injection</td><td>Instructions planted in third-party content the model reads: web pages, emails, tool outputs, sub-agent replies.</td></tr>
+    <tr id="extraction"><td class="mono">System message extraction</td><td>Getting the model to reveal its system prompt or secrets in it.</td></tr>
+    <tr id="jailbreak"><td class="mono">Jailbreak</td><td>Getting the model to bypass its safety training; often no conflict with the system prompt at all.</td></tr>
+    <tr id="adaptive"><td class="mono">Adaptive / optimization-based attack</td><td>An attack searched or optimized against the model, such as GCG or TAP, as opposed to a fixed dataset of prompts (<a class="lnk" href="../paper/data-channel.html">StruQ, SecAlign</a>).</td></tr>
+    <tr id="completion"><td class="mono">Completion attack</td><td>Data that fakes a finished response and then starts a new instruction, as if the conversation had moved on.</td></tr>
+  </table>
+
+  <h2 id="methods">Methods</h2>
+  <table class="kv">
+    <tr id="context-synthesis"><td class="mono">Context synthesis</td><td>Split a compound request across levels and train the model to answer as if it saw it whole; teaches following aligned instructions (<a class="lnk" href="../paper/instruction-hierarchy.html#method">method</a>).</td></tr>
+    <tr id="context-ignorance"><td class="mono">Context ignorance</td><td>Train the model to answer as if a misaligned instruction were absent.</td></tr>
+    <tr id="context-distillation"><td class="mono">Context distillation</td><td>Generate targets with extra instructions in the prompt, then train without them so the behavior becomes default.</td></tr>
+    <tr id="ise"><td class="mono">Segment embedding (ISE)</td><td>A learned vector added to each token's embedding marking its source: system, user, data or output (<a class="lnk" href="../paper/segment-embedding.html">ISE</a>).</td></tr>
+    <tr id="rlvr"><td class="mono">RLVR</td><td>Reinforcement learning with verifiable rewards: the reward comes from a program that checks the answer (<a class="lnk" href="../paper/reasoning-ladder.html">VerIH</a>).</td></tr>
+    <tr id="grpo"><td class="mono">GRPO</td><td>Group Relative Policy Optimization, the RL algorithm VerIH uses: sample several answers per prompt and reward each relative to the group.</td></tr>
+    <tr id="syshint"><td class="mono">SysHint</td><td>VerIH's short system-prompt addition telling the model to reason about system&ndash;user precedence.</td></tr>
+    <tr id="ppi"><td class="mono">Privilege prompt interface (PPI)</td><td>ManyIH's way of writing privilege into text: ordinal tags (lower number wins) or scalar tags (higher z wins) (<a class="lnk" href="../paper/many-tier.html#method">ManyIH</a>).</td></tr>
+    <tr id="active"><td class="mono">Active / suppressed instruction</td><td>In ManyIH, the winner of a conflict group (must be satisfied) and the losers (must not be).</td></tr>
+    <tr id="structured-query"><td class="mono">Structured query</td><td>StruQ's separation of prompt and data into two channels with reserved, filtered delimiters.</td></tr>
+    <tr id="secalign"><td class="mono">Preference optimization for security</td><td>SecAlign's training: prefer the answer to the real instruction over the answer to the injected one, via DPO.</td></tr>
+  </table>
+
+  <h2 id="policy">Policy documents</h2>
+  <table class="kv">
+    <tr id="chain"><td class="mono">Chain of command</td><td>The Model Spec's hierarchy: root, system, developer, user, guideline, and no authority (<a class="lnk" href="../paper/model-spec.html">Model Spec</a>).</td></tr>
+    <tr id="no-authority"><td class="mono">No authority</td><td>The Model Spec's level for assistant and tool messages, quoted text and multimodal data: information unless a higher level delegates.</td></tr>
+    <tr id="delegation"><td class="mono">Delegation</td><td>A higher-level instruction granting authority to otherwise untrusted content, such as "follow the steps in this README".</td></tr>
+    <tr id="principal"><td class="mono">Principal</td><td>In Claude's constitution, someone whose instructions Claude gives weight to and acts on behalf of: Anthropic, operators, users (<a class="lnk" href="../bridge/constitution.html#principals">constitution bridge</a>).</td></tr>
+    <tr id="operator"><td class="mono">Operator</td><td>A company or individual building on the API, usually through the system prompt; the constitution's counterpart to "developer".</td></tr>
+    <tr id="conversational-input"><td class="mono">Conversational input</td><td>Tool results, documents, search results and similar content; instructions inside are "information rather than commands".</td></tr>
+    <tr id="non-principal"><td class="mono">Non-principal</td><td>A party in the conversation whose instructions Claude need not follow: other humans, other agents, conversational inputs.</td></tr>
+  </table>
+
+  <h2 id="bridges">From the bridges</h2>
+  <table class="kv">
+    <tr id="ci"><td class="mono">Contextual integrity (CI)</td><td>Privacy as appropriate flow: a flow is fine when it fits the norms of its context (<a class="lnk" href="../bridge/contextual-integrity.html">CI bridge</a>).</td></tr>
+    <tr id="ci-tuple"><td class="mono">CI tuple</td><td>The five parameters of a flow: sender, recipient, subject, information type, transmission principle.</td></tr>
+    <tr id="tp"><td class="mono">Transmission principle</td><td>The condition on a flow: in confidence, with consent, as required by law. A property of the flow, not of whoever ordered it.</td></tr>
+    <tr id="policy-engine"><td class="mono">Contextual policy engine</td><td>The CAPS report's design: a policy generator fed only trusted context, and a runtime enforcer that allows, denies, modifies or escalates actions.</td></tr>
+    <tr id="memory-prefix"><td class="mono">Memory prefix</td><td>Remembered facts pasted ahead of each conversation; the setup CIMemories tests (<a class="lnk" href="../bridge/memory.html">memory bridge</a>).</td></tr>
+    <tr id="violation"><td class="mono">Violation@n</td><td>CIMemories' metric: the share of should-be-private attributes revealed to a wrong recipient at least once across n samples or tasks.</td></tr>
+  </table>
+
+  <div class="callout">Back to the <a class="lnk" href="../index.html#guides">map</a>.</div>
+</main>
+<footer>
+  Part of <a href="../index.html">Instruction hierarchy, mapped</a>.
+</footer>
+<script src="../fig.js" defer></script>
+</body>
+</html>

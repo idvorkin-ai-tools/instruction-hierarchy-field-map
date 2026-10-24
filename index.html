@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Instruction hierarchy, mapped — who gets to give a language model orders</title>
+<meta name="description" content="A field map of the instruction-hierarchy papers: Wallace et al. 2024, Instructional Segment Embedding, Reasoning Up the Instruction Ladder (VerIH), Many-Tier Instruction Hierarchy, the data-versus-instruction defenses and the Model Spec chain of command, with bridges to contextual integrity, Claude's constitution and model memory." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="paper.css" />
+<style>
+  main{max-width:960px}
+  .hero{padding:24px 0 8px}
+  .hero h1{font-size:clamp(32px,5.5vw,52px);line-height:1.05;margin:10px 0 14px;letter-spacing:-.01em}
+  .hero .sub{font-size:18px;color:var(--ink-dim);max-width:760px;line-height:1.55}
+  .answer{margin:28px 0 6px;padding:20px 24px;border-left:3px solid var(--off);background:var(--panel);
+    border-radius:0 12px 12px 0;color:var(--ink-mid);font-size:16.5px;line-height:1.6;max-width:780px}
+  .answer b{color:var(--ink)}
+  .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:26px 0 8px}
+  .fact{border:1px solid var(--line-soft);border-radius:8px;padding:12px 14px}
+  .fact .k{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim)}
+  .fact .v{font-size:17px;font-weight:600;margin-top:4px}
+  section{padding:56px 0;border-bottom:1px solid var(--line-soft);scroll-margin-top:64px}
+  section:last-of-type{border-bottom:none}
+  .arc-head{display:flex;align-items:baseline;gap:14px;margin:0 0 6px;flex-wrap:wrap}
+  .arc-head .idx{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.14em;color:var(--ink-dim)}
+  .arc-head h2{margin:0;font-size:26px}
+  .arc-sub{color:var(--ink-dim);margin:0 0 22px;max-width:720px}
+  .row{display:grid;grid-template-columns:44px 1fr;gap:14px;padding:16px 0;border-top:1px solid var(--line-soft);align-items:start}
+  .row:first-of-type{border-top:none}
+  .row .num{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink-dim);padding-top:3px}
+  .row .name{font-weight:600;font-size:17px;line-height:1.3}
+  .row .name a{color:var(--ink)}
+  .row .meta{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-dim);margin:4px 0 6px;display:flex;flex-wrap:wrap;gap:10px}
+  .row .desc{color:var(--ink-dim);font-size:14.5px;line-height:1.55}
+  .amber .row .name a:hover{color:var(--off)} .cyan .row .name a:hover{color:var(--def)}
+  .check{width:16px;height:16px;border:1px solid var(--ink-dim);border-radius:4px;display:inline-block;vertical-align:-3px;margin-right:6px;cursor:pointer;background:transparent}
+  .check.on{background:var(--off);border-color:var(--off)}
+  .cyan .check.on{background:var(--def);border-color:var(--def)}
+  .links{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+  .links a{display:block;border:1px solid var(--line-soft);border-radius:8px;padding:12px 14px;color:var(--ink);text-decoration:none}
+  .links a:hover{border-color:var(--def)}
+  .links a b{display:block;font-size:15px;margin-bottom:3px}
+  .links a span{font-size:13px;color:var(--ink-dim)}
+  .progress{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-dim);margin-top:8px}
+  .dims{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:18px 0 4px}
+  .dim{border:1px solid var(--line-soft);border-radius:10px;padding:14px 16px;background:var(--panel)}
+  .dim .k{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--off);text-transform:uppercase}
+  .cyan .dim .k{color:var(--def)}
+  .dim b{display:block;font-size:16px;margin:4px 0 6px}
+  .dim p{font-size:14px;color:var(--ink-dim);margin:0;line-height:1.55}
+  @media (max-width:560px){.row{grid-template-columns:34px 1fr;gap:10px}}
+</style>
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+  <div class="brand"><span class="dot"></span>INSTRUCTION&nbsp;HIERARCHY&nbsp;//&nbsp;FIELD&nbsp;MAP</div>
+  <a class="back" href="https://idvorkin-ai-tools.github.io/">&larr; all maps</a>
+</div></header>
+<main>
+  <div class="hero">
+    <div class="eyebrow"><span class="box wb mono">WALLACE ET AL. 2024 &rarr; MANYIH 2026</span><span class="mono">four core papers &middot; three neighbors &middot; three bridges &middot; 13 pages here</span></div>
+
+  <figure class="fig hero-fig bare"><button type="button" class="media" aria-label="Enlarge figure: A plush raccoon in a PRIORITY t-shirt sorts paper notes into three trays stacked like a ladder: a sealed memo on top, a handwritten note in the middle, crumpled web printouts at the bottom, one of which it drops into a bin."><img src="img/raccoon-ladder-of-notes.webp" alt="A plush raccoon in a PRIORITY t-shirt sorts paper notes into three trays stacked like a ladder: a sealed memo on top, a handwritten note in the middle, crumpled web printouts at the bottom, one of which it drops into a bin." width="640" height="640" loading="lazy"></button><figcaption>The instruction hierarchy in one picture: every note gets read, but a note's rank depends on who wrote it, and a printout from the web does not get to give orders.</figcaption></figure>
+    <h1>Instruction hierarchy, mapped</h1>
+    <p class="sub">A language model reads one long stream of text: the developer's system prompt, the user's message, a web page it fetched, the output of a tool. Every one of those can contain something phrased as an order. The instruction hierarchy is the idea that the orders should not count equally, and the research question is how to make a model actually behave that way. This map walks the papers that built the idea, compares their four approaches, and connects it to three sibling maps on privacy, Claude's constitution and model memory.</p>
+
+    <div class="answer">
+      <b>The one-sentence version:</b> in April 2024 Wallace and colleagues at OpenAI argued that prompt injection, jailbreaks and system-prompt extraction share one root cause, a model that treats <b>all text as equally privileged</b>, and trained GPT-3.5 Turbo to follow a ranking (system &gt; user &gt; tool output) that obeys lower-ranked instructions only when they agree with higher-ranked ones; system-prompt-extraction robustness rose from 32.8% to 95.9%. Later work tried three other routes to the same behavior: <b>mark each token's rank in the architecture</b> (Instructional Segment Embedding), <b>make the model reason about rank before answering</b> (VerIH), and <b>let the ranking have many tiers set at inference time</b> (ManyIH, where the best of thirteen frontier models scores 42.7%). The open problem the papers leave is who assigns the rank, which is where contextual integrity and Claude's principal hierarchy come in.
+    </div>
+
+    <div class="facts">
+      <div class="fact"><div class="k">Short on time</div><div class="v"><a class="lnk" href="guide/ten-minutes.html">read it in 10 minutes</a></div></div>
+      <div class="fact"><div class="k">Four approaches</div><div class="v"><a class="lnk" href="compare.html">side by side</a></div></div>
+      <div class="fact"><div class="k">Building agents</div><div class="v"><a class="lnk" href="guide/for-builders.html">for builders</a></div></div>
+      <div class="fact"><div class="k">The words</div><div class="v"><a class="lnk" href="guide/glossary.html">glossary</a></div></div>
+    </div>
+    <p class="progress" id="progress">Tick a page when you have read it; this browser remembers.</p>
+  </div>
+
+  <section id="papers" class="amber">
+    <div class="arc-head"><span class="idx">01 &middot; PART A &middot; THE PAPERS</span><h2>Four ways to teach a model whose orders count</h2></div>
+    <p class="arc-sub">One page per paper, each in the same order: the problem it names, the method, the data, the results, and the limits the authors admit. Two more pages cover the neighbors every one of these papers cites: the "data is not instructions" defenses and OpenAI's written chain of command.</p>
+    <div class="dims">
+      <div class="dim"><div class="k">Train it</div><b>Synthetic conflicts</b><p>Wallace et al.: generate aligned and misaligned instructions at each level, fine-tune on the right behavior.</p></div>
+      <div class="dim"><div class="k">Build it in</div><b>A rank per token</b><p>ISE: add a learned "segment" vector to every token saying system, user, data or output.</p></div>
+      <div class="dim"><div class="k">Reason about it</div><b>Think, then obey</b><p>VerIH: reinforcement learning with checkable rewards on system&ndash;user conflicts.</p></div>
+      <div class="dim"><div class="k">Generalize it</div><b>Many tiers, set at run time</b><p>ManyIH: up to 12 privilege levels written into the prompt; a benchmark frontier models mostly fail.</p></div>
+    </div>
+    <div class="row"><div class="num"><span class="check" data-p="a01"></span>01</div><div><div class="name"><a href="paper/instruction-hierarchy.html">The Instruction Hierarchy (Wallace et al., 2024)</a></div><div class="meta"><span>arXiv:2404.13208</span><span>GPT-3.5 Turbo</span><span>context synthesis &middot; context ignorance</span></div><div class="desc">The anchor paper. Why system prompts, user messages and tool outputs should not carry equal weight, the aligned-versus-misaligned rule, how training data was synthesized for each attack, the robustness gains (including on attacks it never trained on) and the over-refusal cost.</div></div></div>
+    <div class="row"><div class="num"><span class="check" data-p="a02"></span>02</div><div><div class="name"><a href="paper/segment-embedding.html">Instructional Segment Embedding (Wu et al., ICLR 2025)</a></div><div class="meta"><span>arXiv:2410.09102</span><span>Llama-2-13B, Llama-3-8B</span><span>a BERT idea, reused</span></div><div class="desc">The architectural route: tag every input token with its source and add a learned embedding for that tag, so the rank is present at every position rather than only in a few delimiter tokens. Gains on two benchmarks, and an honest appendix showing it does nothing against adaptive jailbreaks.</div></div></div>
+    <div class="row"><div class="num"><span class="check" data-p="a03"></span>03</div><div><div class="name"><a href="paper/reasoning-ladder.html">Reasoning Up the Instruction Ladder (Zheng et al., 2025)</a></div><div class="meta"><span>arXiv:2511.04694</span><span>VerIH, 7,192 samples</span><span>GRPO with verifiable rewards</span></div><div class="desc">The reasoning route: rewrite half of an instruction-following dataset so the user conflicts with the system prompt, train with reinforcement learning on checkable constraints, and let the model think about precedence first. Roughly 20-point gains on conflicts, and safety improvements without any safety data.</div></div></div>
+    <div class="row"><div class="num"><span class="check" data-p="a04"></span>04</div><div><div class="name"><a href="paper/many-tier.html">Many-Tier Instruction Hierarchy (Zhang et al., 2026)</a></div><div class="meta"><span>arXiv:2604.09443</span><span>853 tasks &middot; up to 12 tiers</span><span>best model 42.7%</span></div><div class="desc">The generalization: real agents get orders from system prompts, config files, skill files, users, tools and other agents, so two or three fixed roles are not enough. A privilege tag in the prompt, a benchmark built around it, and the finding that accuracy falls as tiers grow and shifts when you merely change how privilege is written.</div></div></div>
+    <div class="row"><div class="num"><span class="check" data-p="a05"></span>05</div><div><div class="name"><a href="paper/data-channel.html">Neighbors: instructions versus data (StruQ, SecAlign)</a></div><div class="meta"><span>arXiv:2402.06363 &middot; arXiv:2410.05451</span><span>two-level special case</span></div><div class="desc">The simplest hierarchy: one channel for the developer's instruction, one for data that must never be obeyed. Reserved delimiter tokens and a filtering front end (StruQ), then preference optimization that cuts most tested attacks, including optimized ones, below 10% success (SecAlign).</div></div></div>
+    <div class="row"><div class="num"><span class="check" data-p="a06"></span>06</div><div><div class="name"><a href="paper/model-spec.html">Neighbors: the chain of command in OpenAI's Model Spec</a></div><div class="meta"><span>Model Spec, 2026-08-18 version</span><span>root &gt; system &gt; developer &gt; user &gt; guideline</span></div><div class="desc">Where the hierarchy is written down as policy rather than trained from a paper: six authority levels, "no authority" for tool outputs and quoted text, delegation by unquoted instructions, and practical rules for when an AGENTS.md file should be followed.</div></div></div>
+  </section>
+
+  <section id="compare" class="amber">
+    <div class="arc-head"><span class="idx">02 &middot; THE COMPARISON</span><h2>Fixed tiers, many tiers, reasoning, architecture</h2></div>
+    <p class="arc-sub">The four papers answer different questions with different models and benchmarks, so their headline numbers cannot be lined up directly. This page compares what each assumes, where the rank comes from, what it costs, and what it leaves open.</p>
+    <div class="row"><div class="num"><span class="check" data-p="b01"></span>07</div><div><div class="name"><a href="compare.html">Four ways to build an instruction hierarchy</a></div><div class="meta"><span>where rank lives</span><span>who assigns it</span><span>what breaks</span></div><div class="desc">A side-by-side table, the shared evaluation trap (over-refusal), why "more tiers" and "more reasoning" are separate axes, and the one assumption every paper makes: that something trustworthy has already labeled each piece of text with its source.</div></div></div>
+  </section>
+
+  <section id="bridges" class="cyan">
+    <div class="arc-head"><span class="idx">03 &middot; BRIDGES</span><h2>Into the sibling maps</h2></div>
+    <p class="arc-sub">The instruction hierarchy answers "whose order wins". Three sibling maps ask neighboring questions: which information flows are appropriate (contextual integrity), how a model should weigh its principals (Claude's constitution), and what to do with facts a model remembers (CIMemories). Each bridge page says where the ideas meet and where they do not.</p>
+    <div class="row"><div class="num"><span class="check" data-p="c01"></span>08</div><div><div class="name"><a href="bridge/contextual-integrity.html">Instruction hierarchy &times; contextual integrity</a></div><div class="meta"><span>to: Agentic privacy, mapped</span><span>transmission principles vs. privilege tiers</span></div><div class="desc">A privilege tier decides whether an instruction is obeyed; a contextual-integrity norm decides whether a flow of information is appropriate. Why an agent needs both, why indirect prompt injection is a low-privilege sender trying to set a flow, and how the CAPS report's policy engine keeps untrusted text away from the rules.</div></div></div>
+    <div class="row"><div class="num"><span class="check" data-p="c02"></span>09</div><div><div class="name"><a href="bridge/constitution.html">Instruction hierarchy &times; Claude's constitution</a></div><div class="meta"><span>to: Constitutional AI, mapped</span><span>principals &middot; non-principals &middot; conversational inputs</span></div><div class="desc">Anthropic, operators and users as principals with different trust; tool results and documents as information, not commands; the user protections an operator cannot override; and why the constitution calls its ordering "not a strict hierarchy".</div></div></div>
+    <div class="row"><div class="num"><span class="check" data-p="c03"></span>10</div><div><div class="name"><a href="bridge/memory.html">Memory as a source</a></div><div class="meta"><span>to: CIMemories, mapped</span><span>where a remembered fact sits</span></div><div class="desc">A memory prefix is text the model wrote about you in an earlier conversation, pasted in front of the current one. Is it an instruction, a user message or data? Why none of the papers assigns it a tier, what CIMemories measures instead, and a proposal for treating memory as a sender with its own rank.</div></div></div>
+  </section>
+
+  <section id="guides" class="amber">
+    <div class="arc-head"><span class="idx">04 &middot; GUIDES</span><h2>Three ways in</h2></div>
+    <div class="row"><div class="num"><span class="check" data-p="g01"></span>11</div><div><div class="name"><a href="guide/ten-minutes.html">Read it in 10 minutes</a></div><div class="meta"><span>the whole map, compressed</span></div><div class="desc">The problem, the four approaches, the numbers worth remembering, and the three bridges, in about two thousand words.</div></div></div>
+    <div class="row"><div class="num"><span class="check" data-p="g02"></span>12</div><div><div class="name"><a href="guide/for-builders.html">For builders</a></div><div class="meta"><span>system prompts &middot; tools &middot; agents</span></div><div class="desc">What the papers imply if you write system prompts, wire tool outputs into a model, or build a harness that has to decide which text gets which rank.</div></div></div>
+    <div class="row"><div class="num"><span class="check" data-p="g03"></span>13</div><div><div class="name"><a href="guide/glossary.html">Glossary</a></div><div class="meta"><span>terms from all the papers</span></div><div class="desc">Aligned and misaligned instructions, context synthesis and ignorance, direct and indirect prompt injection, segment embedding, RLVR, privilege prompt interface, principal, conversational input, transmission principle.</div></div></div>
+  </section>
+
+  <section id="refs">
+    <div class="arc-head"><span class="idx">05</span><h2>Sources and related maps</h2></div>
+    <div class="links">
+      <a href="https://arxiv.org/abs/2404.13208" target="_blank" rel="noopener"><b>The Instruction Hierarchy</b><span>Wallace, Xiao, Leike, Weng, Heidecke, Beutel, arXiv:2404.13208, 19 Apr 2024</span></a>
+      <a href="https://arxiv.org/abs/2410.09102" target="_blank" rel="noopener"><b>Instructional Segment Embedding</b><span>Wu et al., ICLR 2025, arXiv:2410.09102; code at github.com/tongwu2020/ISE</span></a>
+      <a href="https://arxiv.org/abs/2511.04694" target="_blank" rel="noopener"><b>Reasoning Up the Instruction Ladder</b><span>Zheng, Balachandran, Park, Brahman, Kumar, arXiv:2511.04694 (v5, Jul 2026)</span></a>
+      <a href="https://arxiv.org/abs/2604.09443" target="_blank" rel="noopener"><b>Many-Tier Instruction Hierarchy in LLM Agents</b><span>Zhang, Li, Jurayj, Zhan, Van Durme, Khashabi, arXiv:2604.09443 (v4, Sep 2026)</span></a>
+      <a href="https://arxiv.org/abs/2402.06363" target="_blank" rel="noopener"><b>StruQ</b><span>Chen, Piet, Sitawarin, Wagner, structured queries against prompt injection, arXiv:2402.06363</span></a>
+      <a href="https://arxiv.org/abs/2410.05451" target="_blank" rel="noopener"><b>SecAlign</b><span>Chen et al., preference optimization against prompt injection, CCS 2025, arXiv:2410.05451</span></a>
+      <a href="https://model-spec.openai.com/2026-08-18.html#chain_of_command" target="_blank" rel="noopener"><b>OpenAI Model Spec: the chain of command</b><span>The 2026-08-18 version, levels of authority and "ignore untrusted data by default"</span></a>
+      <a href="https://www.anthropic.com/constitution#what-constitutes-genuine-helpfulness" target="_blank" rel="noopener"><b>Claude's constitution: principals</b><span>The section that defines Claude's three principals and non-principal inputs</span></a>
+      <a href="https://idvorkin-ai-tools.github.io/agentic-privacy-field-map/" target="_blank" rel="noopener"><b>Related: Agentic privacy, mapped</b><span>The CAPS workshop report: contextual integrity for AI agents and 51 open problems</span></a>
+      <a href="https://idvorkin-ai-tools.github.io/cimemories-field-map/" target="_blank" rel="noopener"><b>Related: CIMemories, mapped</b><span>A benchmark for contextual integrity in a model's persistent memory</span></a>
+      <a href="https://idvorkin-ai-tools.github.io/constitutional-ai-field-map/" target="_blank" rel="noopener"><b>Related: Constitutional AI, mapped</b><span>The 2022 paper and Claude's 2026 constitution, chapter by chapter</span></a>
+    </div>
+  </section>
+</main>
+<footer>
+  An unofficial field map of the instruction-hierarchy literature, compiled 2026-10-24 from the arXiv versions linked above. Figure, table and section numbers are the papers' own; numbers on these pages were checked against the PDFs. The papers are &copy; their authors; the Model Spec and Claude's constitution are quoted briefly for commentary. This map explains and links rather than copies. Part of <a href="https://idvorkin-ai-tools.github.io/">the field maps</a>.
+</footer>
+<script>
+(function(){
+  var boxes = document.querySelectorAll('.check');
+  var key = 'instruction-hierarchy-fieldmap-read';
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(key) || '{}'); } catch(e) { state = {}; }
+  function save(){ try { localStorage.setItem(key, JSON.stringify(state)); } catch(e){} }
+  function paint(){
+    var done = 0;
+    boxes.forEach(function(b){
+      if (state[b.dataset.p]) { b.classList.add('on'); done++; } else { b.classList.remove('on'); }
+    });
+    var el = document.getElementById('progress');
+    if (el) el.textContent = done === 0
+      ? 'Tick a page when you have read it; this browser remembers.'
+      : done + ' of ' + boxes.length + ' pages read.';
+  }
+  boxes.forEach(function(b){
+    b.setAttribute('role','button');
+    b.setAttribute('tabindex','0');
+    b.addEventListener('click', function(e){ e.preventDefault(); state[b.dataset.p] = !state[b.dataset.p]; save(); paint(); });
+    b.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); b.click(); } });
+  });
+  paint();
+})();
+</script>
+<script src="fig.js" defer></script>
+</body>
+</html>

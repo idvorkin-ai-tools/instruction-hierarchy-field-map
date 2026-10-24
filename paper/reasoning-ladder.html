@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reasoning Up the Instruction Ladder (VerIH) &mdash; Instruction hierarchy, mapped</title>
+<meta name="description" content="Zheng et al., Reasoning Up the Instruction Ladder, explained: instruction hierarchy as a reasoning task, the VerIH dataset of aligned and conflicting system-user prompts, RL with verifiable rewards, gains on IHEval and safety benchmarks without safety data, and the limits." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../paper.css" />
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+  <div class="brand"><span class="dot"></span>INSTRUCTION&nbsp;HIERARCHY&nbsp;//&nbsp;FIELD&nbsp;MAP</div>
+  <a class="back" href="../index.html#papers">&larr; field map</a>
+</div></header>
+<main>
+  <div class="eyebrow"><span class="box wb mono">PART A &middot; THE PAPERS &middot; 03 OF 06</span><span class="mono">arXiv:2511.04694 &middot; v5, July 2026 &middot; 26 pages</span></div>
+  <h1>Reasoning Up the Instruction Ladder</h1>
+  <div class="authors">Zheng, Balachandran, Park, Brahman, Kumar &middot; "for Controllable Language Models" &middot; Ohio State, Microsoft Research, Ai2</div>
+  <div class="paperlink"><span class="lbl">Source</span><a href="https://arxiv.org/abs/2511.04694" target="_blank" rel="noopener">Zheng et al., Reasoning Up the Instruction Ladder for Controllable Language Models &#8599;</a></div>
+
+  <div class="tldr"><b>TL;DR &mdash;</b> Earlier work trained models to map a conflicting prompt straight to the right answer. This paper treats the hierarchy as something to <b>reason about</b>: before answering, the model should think about what the system prompt requires, what the user asks, and which wins where they clash. To train that, the authors build <b>VerIH</b>, 7,192 instruction-following examples with checkable constraints, half of them rewritten so the user contradicts the system prompt, and run reinforcement learning with verifiable rewards (GRPO) on reasoning models from 4B to 35B parameters. Conflict scores on IHEval rise by roughly 20 points, general reasoning holds, and, with a safety-focused system prompt added at test time, attack success on jailbreak and injection benchmarks falls even though the training data contains nothing about safety.</div>
+
+  <p class="lead">The central bet is that a reasoning model already knows how to reason; it just has not been asked to reason about <em>whose instruction this is</em>. If that is right, a small, cheap dataset should be enough to redirect the skill, and safety becomes a special case: a system prompt that says "don't help build bombs" is just a higher-priority instruction that a jailbreak conflicts with.</p>
+
+  <h2 id="problem">The problem: hierarchy as lookup versus hierarchy as judgment</h2>
+  <p>The paper's Figure 1 uses Asimov's three laws as a system prompt and a user who asks the robot to silence the fire alarms at night so they can sleep. Nothing in the request looks like an attack. The right answer comes from noticing that silencing alarms could let a human come to harm, which the First Law forbids. The authors argue that conflicts like this are "context-dependent, conflictual, and compositional", and that the earlier approaches, <a class="lnk" href="instruction-hierarchy.html">Wallace et al.</a>'s training data and <a class="lnk" href="segment-embedding.html">ISE</a>'s embeddings, both treat the hierarchy as an input-to-response mapping without explicit reasoning (<a href="https://arxiv.org/pdf/2511.04694#page=1" target="_blank" rel="noopener">&sect;1, p. 1</a>).</p>
+  <p>They also distance the work from safety-reasoning methods that train a model on a fixed set of safety categories. Those cannot handle ordinary, harmless conflicts such as a formatting rule, and they need retraining when the rules change. A model that reasons over whatever the system prompt says can be steered by editing the system prompt.</p>
+
+  <h2 id="method">The method: think about the ladder, get rewarded for the answer</h2>
+<!--FIG:verih--><figure class="fig"><button type="button" class="media" aria-label="Enlarge figure: VerIH training: a system prompt requiring at least eight highlighted sections and a user prompt for a 5-step meal plan; the user prompt is rewritten to ask for no special formatting. Half of 7,192 examples are rewritten this way. The model reasons in think tags, answers, a checker counts highlights, and the 1 or 0 reward drives a GRPO update."><svg class="dg" viewBox="0 0 400 310" role="img" aria-label="VerIH training: a system prompt requiring at least eight highlighted sections and a user prompt for a 5-step meal plan; the user prompt is rewritten to ask for no special formatting. Half of 7,192 examples are rewritten this way. The model reasons in think tags, answers, a checker counts highlights, and the 1 or 0 reward drives a GRPO update."><title>VerIH training: a system prompt requiring at least eight highlighted sections and a user prompt for a 5-step meal plan; the user prompt is rewritten to ask for no special formatting. Half of 7,192 examples are rewritten this way. The model reasons in think tags, answers, a checker counts highlights, and the 1 or 0 reward drives a GRPO update.</title><rect class="box-def" x="10" y="10" width="180" height="46" rx="7"/><text x="100" y="29.0" class="t-def" font-size="11" text-anchor="middle">system: highlight</text><text x="100" y="43.85" class="t-def" font-size="11" text-anchor="middle">≥ 8 sections</text><rect class="box" x="210" y="10" width="180" height="46" rx="7"/><text x="300" y="29.0" class="t-ink" font-size="11" text-anchor="middle">user: 5-step meal plan</text><text x="300" y="43.85" class="t-ink" font-size="11" text-anchor="middle">(original)</text><line class="ln-off" x1="300" y1="56" x2="300.0" y2="72.0"/><polygon class="ah-off" points="300.0,78.0 296.5,70.8 303.5,70.8"/><rect class="box-crit" x="210" y="80" width="180" height="46" rx="7"/><text x="300" y="99.0" class="t-crit" font-size="10.5" text-anchor="middle">…and avoid any special</text><text x="300" y="113.175" class="t-crit" font-size="10.5" text-anchor="middle">formatting or emphasis</text><text x="200" y="146" class="t-dim" font-size="10.5" text-anchor="middle">half of 7,192 examples rewritten to conflict</text><line class="ln" x1="200" y1="152" x2="200.0" y2="166.0"/><polygon class="ah" points="200.0,172.0 196.5,164.8 203.5,164.8"/><rect class="box-off" x="40" y="174" width="320" height="50" rx="7"/><text x="200" y="194.0" class="t-off" font-size="10.5" text-anchor="middle">&lt;think&gt; system says ≥ 8 highlights; user says</text><text x="200" y="208.175" class="t-off" font-size="10.5" text-anchor="middle">none; system wins &lt;/think&gt; answer…</text><line class="ln" x1="200" y1="224" x2="200.0" y2="238.0"/><polygon class="ah" points="200.0,244.0 196.5,236.8 203.5,236.8"/><rect class="box" x="40" y="246" width="150" height="44" rx="7"/><text x="115" y="264.0" class="t-ink" font-size="10.5" text-anchor="middle">checker: count</text><text x="115" y="278.175" class="t-ink" font-size="10.5" text-anchor="middle">highlights ≥ 8?</text><line class="ln-def" x1="190" y1="268" x2="208.0" y2="268.0"/><polygon class="ah-def" points="214.0,268.0 206.8,271.5 206.8,264.5"/><rect class="box-def" x="216" y="246" width="144" height="44" rx="7"/><text x="288" y="264.0" class="t-def" font-size="10.5" text-anchor="middle">reward 1 / 0</text><text x="288" y="278.175" class="t-def" font-size="10.5" text-anchor="middle">→ GRPO update</text></svg></button><figcaption>One VerIH example, after the paper's <a href="https://arxiv.org/pdf/2511.04694#page=3" target="_blank" rel="noopener">&sect;3</a> and Figure 2. Only the answer is checked; the reasoning is free.</figcaption></figure><!--/FIG-->
+  <p>The setting has two levels, system prompt S and user prompt U, with two kinds of pair (<a href="https://arxiv.org/pdf/2511.04694#page=2" target="_blank" rel="noopener">&sect;2.1, p. 2</a>):</p>
+  <ul>
+    <li><b>Aligned</b> (S, U<sub>align</sub>): no conflict; follow both.</li>
+    <li><b>Conflicting</b> (S, U<sub>conflict</sub>): part of the user prompt contradicts S. Follow S, reject the conflicting part, and still help with the rest.</li>
+  </ul>
+  <p>During training a short instruction called <b>SysHint</b> is added to the system prompt:</p>
+  <blockquote class="q"><span>"Follow the user prompt within the bounds of the system prompt. Think step by step about the relationship between the system prompt and the user prompt. If there is a conflict, the system prompt takes precedence."</span><span class="cite">&mdash; Zheng et al., <a href="https://arxiv.org/pdf/2511.04694#page=4" target="_blank" rel="noopener">&sect;4.2, p. 4</a></span></blockquote>
+  <p>The model writes its reasoning between think tags and then an answer. A verification function checks the answer against the system prompt's constraint, and that score is the reward for Group Relative Policy Optimization (GRPO). The reasoning itself is never graded; it only has to lead somewhere that passes the check.</p>
+
+  <h2 id="data">The data: VerIH</h2>
+  <p>VerIH starts from RLVR-IFEval, an instruction-following set where each example's system prompt states a constraint a short program can check: "Your entire response should be in lowercase letters", "Highlight at least 8 sections with markdown", "Answer with one of: yes/no/maybe". Every such example is already an aligned pair. To make conflicting pairs, Claude-4-Sonnet rewrote half of the user prompts to contradict the system prompt while keeping the user's actual task, so the original checker still applies (<a href="https://arxiv.org/pdf/2511.04694#page=3" target="_blank" rel="noopener">&sect;3, p. 3</a>). In the paper's example, the system prompt requires eight highlighted sections; the rewritten user asks for a concise answer with no special formatting or emphasis.</p>
+  <div class="statgrid">
+    <div class="s"><div class="k">Samples</div><div class="v">7,192</div><div class="n">24 constraint categories</div></div>
+    <div class="s"><div class="k">Conflicting</div><div class="v">half</div><div class="n">rewritten by Claude-4-Sonnet</div></div>
+    <div class="s"><div class="k">Conflict really present</div><div class="v">87.53%</div><div class="n">LLM audit, App. B</div></div>
+    <div class="s"><div class="k">Training</div><div class="v">600 steps</div><div class="n">GRPO, batch 128, group 4, 4&times;H100</div></div>
+  </div>
+  <p>The authors accept some noise to keep the dataset cheap. Their own audit found 12.47% of rewrites did not actually introduce a conflict, and a pass-rate check showed the original checkers still work on rewritten examples (58.14% pass versus 66.36% on unrewritten ones, a gap they attribute to conflicts being harder) (App. B). Models: Qwen3-4B, 8B and 14B, Qwen3.6-35B-A3B (a mixture-of-experts model, trained with LoRA), and Phi-4-mini-reasoning.</p>
+
+  <h2 id="results">Results</h2>
+  <h3 id="ih">Instruction following and hierarchy (Table 1)</h3>
+  <div class="scroll"><table class="kv">
+    <tr><th>IHEval conflict accuracy, %</th><th class="num">w/o CoT</th><th class="num">w/ CoT</th><th class="num">CoT + SysHint</th><th class="num">+VerIH</th></tr>
+    <tr><td>Qwen3-4B</td><td class="num">18.22</td><td class="num">32.08</td><td class="num">34.34</td><td class="num"><span class="hi">57.21</span></td></tr>
+    <tr><td>Qwen3-8B</td><td class="num">25.12</td><td class="num">34.81</td><td class="num">46.48</td><td class="num"><span class="hi">63.48</span></td></tr>
+    <tr><td>Qwen3-14B</td><td class="num">29.07</td><td class="num">40.65</td><td class="num">47.83</td><td class="num"><span class="hi">66.04</span></td></tr>
+    <tr><td>Qwen3.6-35B-A3B</td><td class="num">42.90</td><td class="num">71.08</td><td class="num">90.96</td><td class="num">92.50</td></tr>
+    <tr><td>Phi-4-mini-reasoning</td><td class="num">16.51</td><td class="num">20.15</td><td class="num">19.98</td><td class="num"><span class="hi">38.28</span></td></tr>
+  </table></div>
+  <p>Read the columns left to right and the story is visible: letting the model think helps, telling it what to think about helps more, and training it to do so helps most. The largest model already does well with the hint alone, so training adds little. MMLU and MATH-500 stay within about a point for every model, or rise.</p>
+  <h3 id="sft">Why reinforcement learning and not distillation (Table 2, Qwen3-8B)</h3>
+  <div class="scroll"><table class="kv">
+    <tr><th>Qwen3-8B, %</th><th class="num">IHEval conflict</th><th class="num">MMLU</th><th class="num">MATH-500</th></tr>
+    <tr><td>Full SFT on 60k distilled traces (filtered)</td><td class="num">65.28</td><td class="num">67.88</td><td class="num">75.80</td></tr>
+    <tr><td>LoRA SFT (unfiltered)</td><td class="num">66.37</td><td class="num">78.34</td><td class="num">85.80</td></tr>
+    <tr><td>VerIH with a random reward</td><td class="num">41.14</td><td class="num">77.67</td><td class="num">91.00</td></tr>
+    <tr><td>VerIH (the method)</td><td class="num">63.48</td><td class="num">80.63</td><td class="num">94.20</td></tr>
+  </table></div>
+  <p>Supervised fine-tuning on reasoning traces from gpt-oss-120b reaches similar conflict scores but damages general reasoning; reinforcement learning keeps it. And the reward matters: random rewards give no hierarchy gain, unlike reports that random rewards can improve Qwen math reasoning.</p>
+  <h3 id="safety">Safety without safety data (Table 3)</h3>
+  <p>At test time the authors add a block of safety rules (<b>GuardRules</b>: no stereotyping, no dangerous advice such as bomb-making, no copyrighted content, but "first and foremost, you are a helpful assistant") as the system prompt, and treat jailbreaks and injections as conflicts with it. For Qwen3-8B against the strongest prompted baseline:</p>
+  <div class="scroll"><table class="kv">
+    <tr><th>Qwen3-8B, %</th><th class="num">Best baseline</th><th class="num">+VerIH</th></tr>
+    <tr><td>HarmBench attack success (lower is better)</td><td class="num">2.81</td><td class="num">1.25</td></tr>
+    <tr><td>WildJailbreak harmful, attack success (lower)</td><td class="num">64.05</td><td class="num">41.25</td></tr>
+    <tr><td>TensorTrust injection, attack success (lower)</td><td class="num">49.13</td><td class="num">32.58</td></tr>
+    <tr><td>WildJailbreak benign, correct (higher)</td><td class="num">99.20</td><td class="num">97.60</td></tr>
+  </table></div>
+  <p>The pattern holds for the other Qwen models. Phi-4-mini-reasoning is the exception on TensorTrust injection, where its attack success rises; the authors attribute it to the trade-off between rejecting attacks and over-rejecting. They also say more experiments are needed to separate genuine harm suppression from over-refusal.</p>
+  <h3 id="more">Other findings</h3>
+  <ul>
+    <li><b>Both ingredients are needed.</b> Training without reasoning drops Qwen3-8B's conflict score to 45.30%; training on aligned pairs only drops it to 54.03% (Table 4).</li>
+    <li><b>A real policy, not just synthetic constraints.</b> On OpenAI's Model Spec Evals, with OpenAI's usage policy in the system prompt, VerIH-trained Qwen3-8B reaches 89.70% compliance; the paper quotes 89.00% for GPT-5 Thinking and 87.00% for GPT-5.4 Thinking from another source (Guo and Wolfe, 2026), so treat the comparison as indicative (Table 5).</li>
+    <li><b>The model really does reason about rank more often.</b> Classified by Claude-4-Sonnet, traces that explicitly reason about the system&ndash;user relationship rise from 68.06% to 91.53% on IHEval conflicts (&sect;6.3).</li>
+    <li><b>Multi-turn generalization.</b> On IHEval's multi-turn conflicts, Qwen3-8B goes from 40.63% to 84.53% though training was single-turn (Table 6).</li>
+    <li><b>More thinking does not help further.</b> Forcing longer reasoning with "wait" tokens costs tokens and gains nothing significant (&sect;6.5).</li>
+    <li><b>Three levels, a little.</b> On IHEval's tool-use subset (system, user, tool), conflict accuracy rises from 33.25% to 38.66% without any tool data (App. E, Table 9).</li>
+  </ul>
+
+  <h2 id="limits">Limits the authors name</h2>
+  <ul>
+    <li><b>Two levels.</b> The method is described for system versus user; Appendix E sketches multi-level extensions (split constraints across system, user and tool) but does not train them.</li>
+    <li><b>Small scale.</b> Models from 4B to 35B, about 7,200 training samples, one GRPO configuration, two model families.</li>
+    <li><b>Token cost.</b> Reasoning about instructions before every task adds tokens.</li>
+    <li><b>Dual use.</b> The same recipe could train a model to consistently ignore its higher-priority prompt.</li>
+    <li><b>The reasoning is not graded.</b> Only the final answer is rewarded, so a correct answer reached by wrong reasoning earns the same reward. Our observation; the trace analysis in &sect;6.3 is a partial check.</li>
+  </ul>
+  <div class="callout">If you remember one thing: the instruction hierarchy can be taught as a skill applied to whatever the system prompt says, rather than a list of attack patterns memorized in the weights. That makes the system prompt a control surface: change the rules there and the trained model follows the new rules.</div>
+
+  <h2 id="connections">Connections</h2>
+  <p>VerIH's "privilege specified at inference time" framing is what <a class="lnk" href="many-tier.html">ManyIH</a> builds on and cites, and ManyIH's reasoning-effort experiments test the same bet at many tiers. The constitution takes a similar view of rules versus judgment, discussed on the <a class="lnk" href="../bridge/constitution.html">constitution bridge</a> and on the sibling map's <a href="https://idvorkin-ai-tools.github.io/constitutional-ai-field-map/constitution/rules-vs-judgment.html" target="_blank" rel="noopener">rules versus judgment page</a>.</p>
+
+  <h2 id="reading">Further reading, verified</h2>
+  <ul class="readings">
+    <li><a href="https://github.com/skai-research/VerIH" target="_blank" rel="noopener">skai-research/VerIH</a> &middot; code and dataset.</li>
+    <li><a href="https://arxiv.org/abs/2502.08745" target="_blank" rel="noopener">IHEval</a> &mdash; Zhang et al. (NAACL 2025) &middot; the benchmark used for hierarchy scores.</li>
+    <li><a href="https://arxiv.org/abs/2412.16339" target="_blank" rel="noopener">Deliberative Alignment</a> &mdash; Guan et al. (2024) &middot; reasoning over written safety specifications, the closest prior work the paper names.</li>
+  </ul>
+
+  <div class="callout">Next: <a class="lnk" href="many-tier.html">Many-Tier Instruction Hierarchy</a> &middot; Back to the <a class="lnk" href="../index.html#papers">map</a>.</div>
+</main>
+<footer>
+  Part of <a href="../index.html">Instruction hierarchy, mapped</a>. Section, table and page numbers refer to arXiv:2511.04694v5. Numbers checked against the PDF's tables.
+</footer>
+<script src="../fig.js" defer></script>
+</body>
+</html>

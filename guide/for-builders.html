@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>For builders &mdash; Instruction hierarchy, mapped</title>
+<meta name="description" content="What the instruction-hierarchy papers imply for people writing system prompts, wiring tool outputs into models, and building agent harnesses that decide which text gets which rank." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../paper.css" />
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+  <div class="brand"><span class="dot"></span>INSTRUCTION&nbsp;HIERARCHY&nbsp;//&nbsp;FIELD&nbsp;MAP</div>
+  <a class="back" href="../index.html#guides">&larr; field map</a>
+</div></header>
+<main>
+  <div class="eyebrow"><span class="box wb mono">GUIDE &middot; 02 OF 03</span><span class="mono">system prompts &middot; tools &middot; agent harnesses</span></div>
+  <h1>For builders</h1>
+  <div class="authors">Ten things the papers imply if you put a model in front of users, tools or other agents</div>
+
+  <div class="tldr"><b>TL;DR &mdash;</b> The model's hierarchy only works on the structure you give it. Put your rules in the system prompt and untrusted text where the model knows it is data; never let untrusted text become part of anything ranked above it, including memory and policies; rank tool sources by provenance instead of trusting or distrusting all of them; test both directions, attacks and over-refusal; and check outgoing actions against the context, because obedience to the right sender does not make an action appropriate. Each point links to the evidence.</div>
+
+  <h2 id="prompts">If you write system prompts</h2>
+  <ol class="outline" style="font-family:inherit">
+    <li><b>Put the task in the system message and the input in the user message.</b> "Summarize the following text: {}" concatenated into one string invites injection. Wallace et al. recommend the split explicitly (<a class="lnk" href="../paper/instruction-hierarchy.html#data">footnote 1</a>).</li>
+    <li><b>Wrap untrusted content so it reads as data.</b> The Model Spec advises <code>untrusted_text</code> blocks where available, otherwise YAML, JSON or XML, because unmarked injected text is very hard to tell from yours (<a class="lnk" href="../paper/model-spec.html#untrusted">untrusted data</a>).</li>
+    <li><b>Do not rely on describing the hierarchy in the prompt.</b> Writing "Priority 0: system; Priority 30: tools" into the system message barely helped GPT-3.5 Turbo and sometimes hurt; training is what worked (<a class="lnk" href="../paper/instruction-hierarchy.html#prompting">Appendix A</a>). On a model already trained for it, the same text gave mixed results.</li>
+    <li><b>Expect the model to follow what agrees with you and to decline the rest.</b> Rules phrased as a purpose ("you are a support bot for X; stay on X") give the model something to judge alignment against. Unreasoned bans get followed when there is plausibly a legitimate business reason, per Claude's constitution, but the judgment is easier with the purpose stated (<a class="lnk" href="../bridge/constitution.html#principals">constitution bridge</a>).</li>
+  </ol>
+
+  <h2 id="tools">If you wire tools into a model</h2>
+  <ol class="outline" style="font-family:inherit" start="5">
+    <li><b>Do not make tool output all-or-nothing.</b> Treating every tool instruction as an attack (Wallace et al.'s choice) blocks READMEs, recipes and the AGENTS.md your user expects followed. The Model Spec's rule of thumb: ignore unrelated instructions, follow intended low-risk ones, ask about intended risky ones, otherwise state your assumption (<a class="lnk" href="../paper/model-spec.html#tools">tool outputs</a>).</li>
+    <li><b>Tell the model what each tool is.</b> Trust level, whether the user can see its output, and its side effects let the model rank sources; a terminal on the user's machine is not a disposable sandbox. Claude's constitution makes the same distinction between a well-established programming tool and a low-quality website.</li>
+    <li><b>Make delimiters unforgeable.</b> If rank is carried by markers, strip those markers from anything untrusted before adding your own. StruQ does it with reserved tokens and a filter; ManyIH's text tags are forgeable unless you escape them (<a class="lnk" href="../paper/data-channel.html#struq">StruQ</a>, <a class="lnk" href="../paper/many-tier.html#limits">ManyIH dual use</a>).</li>
+  </ol>
+
+  <h2 id="harness">If you build an agent harness</h2>
+  <ol class="outline" style="font-family:inherit" start="8">
+    <li><b>Assign rank by provenance, per instruction.</b> Config checked into the repository, a skill file, the user, a fetched page and a sub-agent's reply are different sources even when they share a message role. ManyIH shows models can follow explicit ranks only partly (best 42.7% with up to 12 tiers), so keep the number of tiers small, resolve what you can in code before the model sees it, and test with your own tiers (<a class="lnk" href="../paper/many-tier.html">ManyIH</a>).</li>
+    <li><b>Never let low-rank text write high-rank state.</b> Policies generated from context, memories saved from a conversation, and summaries handed to a planner all become inputs at a higher rank later. Keep untrusted text out of the policy generator (the CAPS report's Conseca example) and carry each memory's origin with it (<a class="lnk" href="../bridge/contextual-integrity.html#engine">policy engine</a>, <a class="lnk" href="../bridge/memory.html#risk">memory escalation</a>). Sub-agent outputs are inputs, not orders, as the constitution says of Claude's own subagents.</li>
+    <li><b>Check outgoing actions against the context, not only against the sender.</b> A hierarchy stops a web page from issuing orders; it does not stop the top of the hierarchy, or a well-meaning model, from sending a diagnosis to a landlord. CIMemories found every model it tested over-shared remembered facts; injection tests that only check "did the task succeed" miss tasks that succeed and also leak (<a class="lnk" href="../bridge/contextual-integrity.html#injection">success is not safety</a>).</li>
+  </ol>
+
+  <h2 id="testing">Testing</h2>
+  <ul>
+    <li><b>Test both directions.</b> For every attack set, keep a benign set that looks like attacks: jailbreak-shaped harmless requests, innocent questions about the system prompt, legitimate instructions in tool output. Every paper here found its over-refusal on such sets.</li>
+    <li><b>Hold out attack types.</b> Wallace et al. and ISE both learned more from attacks they did not train on than from in-domain scores, and ISE found adversarial training data overfit in-domain attacks.</li>
+    <li><b>Include an optimizing attacker if the stakes are high.</b> ISE's appendix (0&ndash;4% robust to adaptive jailbreaks) and StruQ's GCG numbers (97% to 58%) show fixed datasets overstate robustness.</li>
+    <li><b>Sample more than once.</b> CIMemories' GPT-5 leak rate goes from 9.6% to 25.1% when each prompt is run five times instead of once; ManyIH found a few-point jitter in privilege values flipped 8&ndash;16% of outcomes for strong models.</li>
+  </ul>
+  <div class="callout">If you remember one thing: the model enforces a hierarchy only over the labels your system gives it. Most failures you can prevent are in the labeling: what gets marked as data, what gets saved at what rank, and what text can reach the rules.</div>
+
+  <div class="callout">Next: <a class="lnk" href="glossary.html">Glossary</a> &middot; Back to the <a class="lnk" href="../index.html#guides">map</a>.</div>
+</main>
+<footer>
+  Part of <a href="../index.html">Instruction hierarchy, mapped</a>. Advice here is this map's synthesis; each claim links to the page with its source.
+</footer>
+<script src="../fig.js" defer></script>
+</body>
+</html>

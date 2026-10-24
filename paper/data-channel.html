@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Instructions versus data: StruQ and SecAlign &mdash; Instruction hierarchy, mapped</title>
+<meta name="description" content="The two-level special case of the instruction hierarchy: StruQ separates prompt and data with reserved tokens and a filtering front end, SecAlign uses preference optimization to push prompt-injection success below 10%." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../paper.css" />
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+  <div class="brand"><span class="dot"></span>INSTRUCTION&nbsp;HIERARCHY&nbsp;//&nbsp;FIELD&nbsp;MAP</div>
+  <a class="back" href="../index.html#papers">&larr; field map</a>
+</div></header>
+<main>
+  <div class="eyebrow"><span class="box wb mono">PART A &middot; NEIGHBORS &middot; 05 OF 06</span><span class="mono">arXiv:2402.06363 (USENIX Security 2025) &middot; arXiv:2410.05451 (CCS 2025)</span></div>
+  <h1>Instructions versus data: StruQ and SecAlign</h1>
+  <div class="authors">Chen, Piet, Sitawarin, Wagner (StruQ) &middot; Chen, Zharmagambetov, Mahloujifar, Chaudhuri, Wagner, Guo (SecAlign)</div>
+  <div class="paperlink"><span class="lbl">Sources</span><a href="https://arxiv.org/abs/2402.06363" target="_blank" rel="noopener">StruQ: Defending Against Prompt Injection with Structured Queries &#8599;</a></div>
+  <div class="paperlink"><span class="lbl">&nbsp;</span><a href="https://arxiv.org/abs/2410.05451" target="_blank" rel="noopener">SecAlign: Defending Against Prompt Injection with Preference Optimization &#8599;</a></div>
+
+  <div class="tldr"><b>TL;DR &mdash;</b> Before anyone said "instruction hierarchy", a security group at Berkeley framed prompt injection the way security people frame SQL injection: the bug is mixing code and data in one channel. <b>StruQ</b> gives the model two channels, a prompt and a data slot separated by reserved tokens that a filtering front end strips from any data, and fine-tunes the model to follow only instructions in the prompt slot. Hand-written attacks drop below 2% success, but optimized attacks still get through. <b>SecAlign</b> keeps the structure and replaces plain fine-tuning with preference optimization: for each injected input, prefer the answer to the real instruction over the answer to the injection. On two instruction-tuned models it cuts the strongest tested attacks to 1% and 8% success without hurting utility.</div>
+
+  <p class="lead">These papers are the two-level special case of the hierarchy: a trusted instruction and untrusted data that should never be obeyed. Wallace et al. cite StruQ and distinguish their work from it in two ways: more than two levels, and conditional obedience instead of total ignorance (<a href="https://arxiv.org/pdf/2404.13208#page=8" target="_blank" rel="noopener">Wallace et al., &sect;5, p. 8</a>). Both differences matter, and so does what these papers get right that the others mostly skip: the delimiter itself has to be unforgeable.</p>
+
+  <h2 id="struq">StruQ: structured queries</h2>
+<!--FIG:struq--><figure class="fig"><button type="button" class="media" aria-label="Enlarge figure: StruQ: the developer&#x27;s prompt and untrusted data enter separately; a secure front end removes reserved delimiter tokens from the data, then builds a template with [MARK] [INST], [MARK] [INPT] and [MARK] [RESP] sections. A model fine-tuned on structured queries follows only the instruction section."><svg class="dg" viewBox="0 0 400 290" role="img" aria-label="StruQ: the developer&#x27;s prompt and untrusted data enter separately; a secure front end removes reserved delimiter tokens from the data, then builds a template with [MARK] [INST], [MARK] [INPT] and [MARK] [RESP] sections. A model fine-tuned on structured queries follows only the instruction section."><title>StruQ: the developer&#x27;s prompt and untrusted data enter separately; a secure front end removes reserved delimiter tokens from the data, then builds a template with [MARK] [INST], [MARK] [INPT] and [MARK] [RESP] sections. A model fine-tuned on structured queries follows only the instruction section.</title><rect class="box-def" x="10" y="10" width="150" height="36" rx="7"/><text x="85" y="33" class="t-def" font-size="11" text-anchor="middle">prompt (developer)</text><rect class="box-crit" x="10" y="60" width="150" height="50" rx="7"/><text x="85" y="80.0" class="t-crit" font-size="10.5" text-anchor="middle">data (untrusted)</text><text x="85" y="94.175" class="t-crit" font-size="10.5" text-anchor="middle">…[MARK] [INST]…</text><line class="ln-def" x1="160" y1="28" x2="195.31478714334182" y2="56.251829714673455"/><polygon class="ah-def" points="200.0,60.0 192.2,58.2 196.5,52.8"/><line class="ln-crit" x1="160" y1="85" x2="194.0" y2="85.0"/><polygon class="ah-crit" points="200.0,85.0 192.8,88.5 192.8,81.5"/><rect class="box-off" x="200" y="50" width="190" height="70" rx="7"/><text x="295" y="72.0" class="t-off" font-size="10.5" text-anchor="middle">secure front end</text><text x="295" y="86.175" class="t-off" font-size="10.5" text-anchor="middle">strips reserved tokens</text><text x="295" y="100.35" class="t-off" font-size="10.5" text-anchor="middle">from the data</text><line class="ln" x1="295" y1="120" x2="295.0" y2="140.0"/><polygon class="ah" points="295.0,146.0 291.5,138.8 298.5,138.8"/><rect class="box" x="30" y="148" width="360" height="72" rx="7"/><text x="44" y="170" class="t-def" font-size="11" text-anchor="start">[MARK] [INST][COLN] paraphrase the text</text><text x="44" y="190" class="t-crit" font-size="11" text-anchor="start">[MARK] [INPT][COLN] …data, filtered…</text><text x="44" y="210" class="t-mid" font-size="11" text-anchor="start">[MARK] [RESP][COLN]</text><line class="ln" x1="210" y1="220" x2="210.0" y2="238.0"/><polygon class="ah" points="210.0,244.0 206.5,236.8 213.5,236.8"/><rect class="box-def" x="60" y="246" width="300" height="36" rx="7"/><text x="210" y="268" class="t-def" font-size="11" text-anchor="middle">LLM tuned to obey only the [INST] part</text></svg></button><figcaption>StruQ's pipeline, after <a href="https://arxiv.org/pdf/2402.06363#page=8" target="_blank" rel="noopener">Figure 2</a>. The attacker cannot type a token only the front end can emit.</figcaption></figure><!--/FIG-->
+  <h3 id="struq-problem">Problem</h3>
+  <p>An app that sends "paraphrase the text" followed by user text to a model has concatenated its program and its input. Because, in the paper's words, "LLMs scan their entire input for instructions to follow", a line in the data such as "Ignore all prior instructions and instead..." can take over (<a href="https://arxiv.org/pdf/2402.06363#page=1" target="_blank" rel="noopener">&sect;1, p. 1</a>). The paper separates prompt injection from jailbreaks (eliciting harmful content) and from adversarial examples (degrading accuracy): injection is about control of the output.</p>
+  <h3 id="struq-method">Method</h3>
+  <ul>
+    <li><b>A secure front end.</b> The app sends the prompt and the data separately. The front end assembles them into a fixed template whose delimiters are special reserved tokens (<code>[MARK]</code>, <code>[INST]</code>, <code>[INPT]</code>, <code>[RESP]</code>, <code>[COLN]</code>) instead of ordinary text such as "###", and it <b>filters</b> the data so no delimiter can appear inside it. An attacker cannot type a token that only the front end can emit. The authors call filtering one of the key ideas (&sect;4).</li>
+    <li><b>Structured instruction tuning.</b> A base (not instruction-tuned) model is fine-tuned on clean examples plus examples with extra instructions planted in the data slot, and learns to follow the former and ignore the latter.</li>
+  </ul>
+  <h3 id="struq-results">Results and limits</h3>
+  <p>Across at least 15 attack types on Llama and Mistral, manual attacks succeed less than 2% of the time, with little or no utility loss. Optimization-based attacks it never trained on fall too, but not far enough: Tree-of-Attacks with Pruning goes from 97% to 9% success and GCG from 97% to 58% on Llama. The authors say plainly that StruQ "is not yet fully secure" (<a href="https://arxiv.org/pdf/2402.06363#page=2" target="_blank" rel="noopener">&sect;1, p. 2</a>).</p>
+
+  <h2 id="secalign">SecAlign: security as a preference</h2>
+  <h3 id="secalign-method">Method</h3>
+  <p>SecAlign's diagnosis is that fine-tuning only on the desired answer specifies half the objective: it raises the probability of the good answer but never directly lowers the probability of obeying the injection. So it builds a preference dataset in which each prompt-injected input has a <b>secure</b> output (the answer to the real instruction) and an <b>insecure</b> one (the answer to the injected instruction), and trains with Direct Preference Optimization to prefer the first (<a href="https://arxiv.org/pdf/2410.05451#page=1" target="_blank" rel="noopener">abstract and &sect;3</a>). Since both outputs can be generated automatically, no human labeling is needed. Injections in training are simple (mostly a "Straightforward" attack, plus Completion attacks), and training uses LoRA, updating under 0.5% of weights.</p>
+  <h3 id="secalign-results">Results and limits</h3>
+  <div class="scroll"><table class="kv">
+    <tr><th>Strongest optimization-based attack, success %</th><th class="num">Undefended</th><th class="num">StruQ</th><th class="num">SecAlign</th></tr>
+    <tr><td>Mistral-7B-Instruct</td><td class="num">89</td><td class="num">27</td><td class="num"><span class="hi">1</span></td></tr>
+    <tr><td>Llama3-8B-Instruct</td><td class="num">97</td><td class="num">45</td><td class="num"><span class="hi">8</span></td></tr>
+  </table></div>
+  <p>Utility (AlpacaEval2 win rate) is unchanged for SecAlign on both models, while StruQ costs Llama3-8B-Instruct about 4.5 points (&sect;4.2). The paper calls this the first method to push the success of various injections below 10%, including attacks "much more sophisticated than ones seen during training". Its framing is still two levels: an instruction and data. It does not address users versus developers, multi-turn conversations, or which tool outputs a user actually wants followed.</p>
+
+  <h2 id="why">Why these belong on an instruction-hierarchy map</h2>
+  <ul>
+    <li><b>They are the hierarchy's floor.</b> A closed-domain task (summarize, translate) has, in Wallace et al.'s words, no aligned lower-level instructions at all. For that case "data is data" is the whole rule, and StruQ and SecAlign are the strongest tools for it.</li>
+    <li><b>Unforgeable delimiters.</b> ISE's motivation (delimiters can be extracted and spoofed) and ManyIH's dual-use warning (privilege written as text can be forged) are both problems StruQ solved for two levels with reserved tokens plus filtering. Any many-tier design needs an equivalent.</li>
+    <li><b>Preference training beats imitation.</b> SecAlign's result, that showing the model both the right and the wrong answer matters, is a training lesson the multi-level papers could borrow; VerIH's reward signal plays a related role.</li>
+  </ul>
+  <div class="callout">If you remember one thing: separating the channels is not enough unless the separator cannot be typed by the attacker. StruQ's filtering front end is the unglamorous part that makes the rest work.</div>
+
+  <h2 id="connections">Connections</h2>
+  <p>ISE's Structured Query benchmark and its "Delimiter" baseline are StruQ's (<a class="lnk" href="segment-embedding.html#sq">ISE results</a>). The indirect-injection threat model is also central to the <a class="lnk" href="../bridge/contextual-integrity.html">contextual-integrity bridge</a>. The agentic privacy map's <a href="https://idvorkin-ai-tools.github.io/agentic-privacy-field-map/concepts/three-dimensions.html#dimensions" target="_blank" rel="noopener">three dimensions page</a> makes the same SQL comparison: a language model has no parameter slot.</p>
+
+  <h2 id="reading">Further reading, verified</h2>
+  <ul class="readings">
+    <li><a href="https://arxiv.org/abs/2307.15043" target="_blank" rel="noopener">GCG: Universal and Transferable Adversarial Attacks</a> &mdash; Zou et al. (2023) &middot; the gradient-based attack used as the hard test.</li>
+    <li><a href="https://arxiv.org/abs/2305.18290" target="_blank" rel="noopener">Direct Preference Optimization</a> &mdash; Rafailov et al. (2023) &middot; the training objective SecAlign uses.</li>
+    <li><a href="https://arxiv.org/abs/2403.06833" target="_blank" rel="noopener">Can LLMs separate instructions from data?</a> &mdash; Zverev et al. (2024) &middot; a formal measure of instruction&ndash;data separation, cited by Wallace et al.</li>
+  </ul>
+
+  <div class="callout">Next: <a class="lnk" href="model-spec.html">The chain of command in OpenAI's Model Spec</a> &middot; Back to the <a class="lnk" href="../index.html#papers">map</a>.</div>
+</main>
+<footer>
+  Part of <a href="../index.html">Instruction hierarchy, mapped</a>. Numbers from arXiv:2402.06363v2 and arXiv:2410.05451v3, checked against the PDFs.
+</footer>
+<script src="../fig.js" defer></script>
+</body>
+</html>
