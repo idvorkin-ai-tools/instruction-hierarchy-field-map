@@ -198,3 +198,5 @@ svg.dg .t-mid{fill:var(--ink-mid)}
 main h2,main table.kv,main .scroll,main pre.code-block,main .flowrow,main .statgrid,main blockquote.q,main .callout,main .answer{clear:both}
 /* keep the long brand inside a 390px phone bar */
 @media (max-width:480px){.bar-in{padding:11px 16px;gap:8px}.bar .brand{font-size:11px;min-width:0;overflow:hidden;text-overflow:ellipsis}.bar .back{padding:6px 2px}main{padding-left:16px;padding-right:16px}}
+/* instruction-hierarchy map: long inline code wraps on phones */
+main code{font-family:"IBM Plex Mono",monospace;font-size:.88em;overflow-wrap:anywhere}
