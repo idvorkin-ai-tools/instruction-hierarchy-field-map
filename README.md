@@ -13,6 +13,7 @@ A field map of the instruction-hierarchy literature: who gets to give a language
   [agentic privacy](https://idvorkin-ai-tools.github.io/agentic-privacy-field-map/),
   [Constitutional AI](https://idvorkin-ai-tools.github.io/constitutional-ai-field-map/) and
   [CIMemories](https://idvorkin-ai-tools.github.io/cimemories-field-map/).
+- **Explorable ladder** (`ladder.html`): a manipulable diagram of the mechanism. Drag an instruction between the system, user and tool rungs, toggle aligned or misaligned, and see which rule resolves it and where prompt injection sits. Client-side only.
 - **Guides** (`guide/`): read it in 10 minutes, for builders, glossary.
 
 **Live: https://idvorkin-ai-tools.github.io/instruction-hierarchy-field-map/**
