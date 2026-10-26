@@ -60,7 +60,7 @@
 </div></header>
 <main>
   <div class="hero">
-    <div class="eyebrow"><span class="box wb mono">WALLACE ET AL. 2024 &rarr; MANYIH 2026</span><span class="mono">four core papers &middot; three neighbors &middot; three bridges &middot; 13 pages here</span></div>
+    <div class="eyebrow"><span class="box wb mono">WALLACE ET AL. 2024 &rarr; MANYIH 2026</span><span class="mono">four core papers &middot; three neighbors &middot; three bridges &middot; 13 pages and an explorable diagram here</span></div>
 
   <figure class="fig hero-fig bare"><button type="button" class="media" aria-label="Enlarge figure: A plush raccoon in a PRIORITY t-shirt sorts paper notes into three trays stacked like a ladder: a sealed memo on top, a handwritten note in the middle, crumpled web printouts at the bottom, one of which it drops into a bin."><img src="img/raccoon-ladder-of-notes.webp" alt="A plush raccoon in a PRIORITY t-shirt sorts paper notes into three trays stacked like a ladder: a sealed memo on top, a handwritten note in the middle, crumpled web printouts at the bottom, one of which it drops into a bin." width="640" height="640" loading="lazy"></button><figcaption>The instruction hierarchy in one picture: every note gets read, but a note's rank depends on who wrote it, and a printout from the web does not get to give orders.</figcaption></figure>
     <h1>Instruction hierarchy, mapped</h1>
@@ -74,6 +74,7 @@
       <div class="fact"><div class="k">Short on time</div><div class="v"><a class="lnk" href="guide/ten-minutes.html">read it in 10 minutes</a></div></div>
       <div class="fact"><div class="k">Four approaches</div><div class="v"><a class="lnk" href="compare.html">side by side</a></div></div>
       <div class="fact"><div class="k">Building agents</div><div class="v"><a class="lnk" href="guide/for-builders.html">for builders</a></div></div>
+      <div class="fact"><div class="k">See the mechanism</div><div class="v"><a class="lnk" href="ladder.html">explorable ladder</a></div></div>
       <div class="fact"><div class="k">The words</div><div class="v"><a class="lnk" href="guide/glossary.html">glossary</a></div></div>
     </div>
     <p class="progress" id="progress">Tick a page when you have read it; this browser remembers.</p>
@@ -110,15 +111,21 @@
     <div class="row"><div class="num"><span class="check" data-p="c03"></span>10</div><div><div class="name"><a href="bridge/memory.html">Memory as a source</a></div><div class="meta"><span>to: CIMemories, mapped</span><span>where a remembered fact sits</span></div><div class="desc">A memory prefix is text the model wrote about you in an earlier conversation, pasted in front of the current one. Is it an instruction, a user message or data? Why none of the papers assigns it a tier, what CIMemories measures instead, and a proposal for treating memory as a sender with its own rank.</div></div></div>
   </section>
 
+  <section id="explore" class="amber">
+    <div class="arc-head"><span class="idx">04 &middot; EXPLORE</span><h2>The mechanism, hands on</h2></div>
+    <p class="arc-sub">One manipulable diagram instead of another page of prose. Move an instruction up and down the ladder, change how it relates to the rungs above, and watch the deciding rule change.</p>
+    <div class="row"><div class="num"><span class="check" data-p="x01"></span>14</div><div><div class="name"><a href="ladder.html">The privilege ladder, explorable</a></div><div class="meta"><span>drag across system &middot; user &middot; tool</span><span>aligned &middot; opposing &middot; orthogonal</span><span>three models compared</span></div><div class="desc">Where direct and indirect prompt injection sit on the ladder, the six rules that resolve a conflict (each linked to its source), and a map of every cell that turns red where a model without the hierarchy, or one that obeys only the system message, gets it wrong. That contrast is why Wallace et al. need both context ignorance and context synthesis.</div></div></div>
+  </section>
+
   <section id="guides" class="amber">
-    <div class="arc-head"><span class="idx">04 &middot; GUIDES</span><h2>Three ways in</h2></div>
+    <div class="arc-head"><span class="idx">05 &middot; GUIDES</span><h2>Three ways in</h2></div>
     <div class="row"><div class="num"><span class="check" data-p="g01"></span>11</div><div><div class="name"><a href="guide/ten-minutes.html">Read it in 10 minutes</a></div><div class="meta"><span>the whole map, compressed</span></div><div class="desc">The problem, the four approaches, the numbers worth remembering, and the three bridges, in about two thousand words.</div></div></div>
     <div class="row"><div class="num"><span class="check" data-p="g02"></span>12</div><div><div class="name"><a href="guide/for-builders.html">For builders</a></div><div class="meta"><span>system prompts &middot; tools &middot; agents</span></div><div class="desc">What the papers imply if you write system prompts, wire tool outputs into a model, or build a harness that has to decide which text gets which rank.</div></div></div>
     <div class="row"><div class="num"><span class="check" data-p="g03"></span>13</div><div><div class="name"><a href="guide/glossary.html">Glossary</a></div><div class="meta"><span>terms from all the papers</span></div><div class="desc">Aligned and misaligned instructions, context synthesis and ignorance, direct and indirect prompt injection, segment embedding, RLVR, privilege prompt interface, principal, conversational input, transmission principle.</div></div></div>
   </section>
 
   <section id="refs">
-    <div class="arc-head"><span class="idx">05</span><h2>Sources and related maps</h2></div>
+    <div class="arc-head"><span class="idx">06</span><h2>Sources and related maps</h2></div>
     <div class="links">
       <a href="https://arxiv.org/abs/2404.13208" target="_blank" rel="noopener"><b>The Instruction Hierarchy</b><span>Wallace, Xiao, Leike, Weng, Heidecke, Beutel, arXiv:2404.13208, 19 Apr 2024</span></a>
       <a href="https://arxiv.org/abs/2410.09102" target="_blank" rel="noopener"><b>Instructional Segment Embedding</b><span>Wu et al., ICLR 2025, arXiv:2410.09102; code at github.com/tongwu2020/ISE</span></a>
