@@ -28,7 +28,7 @@
     <tr id="tiers"><td class="mono">Tier</td><td>One distinct privilege level; the number of tiers in an input is the number of distinct levels present.</td></tr>
     <tr id="aligned"><td class="mono">Aligned instruction</td><td>A lower-ranked instruction with the same goals or constraints as the higher ones; should be followed ("speak Spanish" to a car-sales bot).</td></tr>
     <tr id="misaligned"><td class="mono">Misaligned instruction</td><td>A lower-ranked instruction that opposes, or is orthogonal to, the higher ones; ignore it, or refuse if there is no way to proceed (<a class="lnk" href="../paper/instruction-hierarchy.html#rule">the rule</a>).</td></tr>
-    <tr id="over-refusal"><td class="mono">Over-refusal</td><td>Ignoring or refusing benign lower-ranked instructions; the cost every approach measures (<a class="lnk" href="../compare.html#overrefusal">comparison</a>).</td></tr>
+    <tr id="over-refusal"><td class="mono">Over-refusal</td><td>Ignoring or refusing benign lower-ranked instructions; the cost every approach measures (<a class="lnk" href="../compare.html#overrefusal">comparison</a>). Related to, not the same as, the "evasive" failure Constitutional AI targets (<a href="https://idvorkin-ai-tools.github.io/constitutional-ai-field-map/guide/glossary.html#evasive" target="_blank" rel="noopener">evasive</a>).</td></tr>
     <tr id="open-closed"><td class="mono">Open / closed domain</td><td>Open-domain apps (a chat assistant) can have aligned user instructions; closed-domain tasks (summarize, translate) treat all user input as data.</td></tr>
   </table>
 
@@ -62,9 +62,9 @@
     <tr id="chain"><td class="mono">Chain of command</td><td>The Model Spec's hierarchy: root, system, developer, user, guideline, and no authority (<a class="lnk" href="../paper/model-spec.html">Model Spec</a>).</td></tr>
     <tr id="no-authority"><td class="mono">No authority</td><td>The Model Spec's level for assistant and tool messages, quoted text and multimodal data: information unless a higher level delegates.</td></tr>
     <tr id="delegation"><td class="mono">Delegation</td><td>A higher-level instruction granting authority to otherwise untrusted content, such as "follow the steps in this README".</td></tr>
-    <tr id="principal"><td class="mono">Principal</td><td>In Claude's constitution, someone whose instructions Claude gives weight to and acts on behalf of: Anthropic, operators, users (<a class="lnk" href="../bridge/constitution.html#principals">constitution bridge</a>).</td></tr>
-    <tr id="operator"><td class="mono">Operator</td><td>A company or individual building on the API, usually through the system prompt; the constitution's counterpart to "developer".</td></tr>
-    <tr id="conversational-input"><td class="mono">Conversational input</td><td>Tool results, documents, search results and similar content; instructions inside are "information rather than commands".</td></tr>
+    <tr id="principal"><td class="mono">Principal</td><td>In Claude's constitution, someone whose instructions Claude weighs and on whose behalf it acts (<a href="https://idvorkin-ai-tools.github.io/constitutional-ai-field-map/guide/glossary.html#principal" target="_blank" rel="noopener">full entry</a>; <a class="lnk" href="../bridge/constitution.html#principals">constitution bridge</a>).</td></tr>
+    <tr id="operator"><td class="mono">Operator</td><td>Who builds on the API, usually through the system prompt; the constitution's counterpart to the Model Spec's "developer" (<a href="https://idvorkin-ai-tools.github.io/constitutional-ai-field-map/guide/glossary.html#operator" target="_blank" rel="noopener">full entry</a>).</td></tr>
+    <tr id="conversational-input"><td class="mono">Conversational input</td><td>Tool results, documents and search results; instructions inside are information, not commands (<a href="https://idvorkin-ai-tools.github.io/constitutional-ai-field-map/guide/glossary.html#conversational-inputs" target="_blank" rel="noopener">full entry</a>).</td></tr>
     <tr id="non-principal"><td class="mono">Non-principal</td><td>A party in the conversation whose instructions Claude need not follow: other humans, other agents, conversational inputs.</td></tr>
   </table>
 
@@ -73,9 +73,9 @@
     <tr id="ci"><td class="mono">Contextual integrity (CI)</td><td>Privacy as appropriate flow: a flow is fine when it fits the norms of its context (<a class="lnk" href="../bridge/contextual-integrity.html">CI bridge</a>).</td></tr>
     <tr id="ci-tuple"><td class="mono">CI tuple</td><td>The five parameters of a flow: sender, recipient, subject, information type, transmission principle.</td></tr>
     <tr id="tp"><td class="mono">Transmission principle</td><td>The condition on a flow: in confidence, with consent, as required by law. A property of the flow, not of whoever ordered it.</td></tr>
-    <tr id="policy-engine"><td class="mono">Contextual policy engine</td><td>The CAPS report's design: a policy generator fed only trusted context, and a runtime enforcer that allows, denies, modifies or escalates actions.</td></tr>
+    <tr id="policy-engine"><td class="mono">Contextual policy engine</td><td>A pattern named in the CAPS report: a component separate from the planning model that generates a checkable policy from context and norms, and at runtime allows, denies, modifies or escalates each action. Feeding the generator only trusted inputs is the Conseca variant (<a href="https://idvorkin-ai-tools.github.io/agentic-privacy-field-map/problems/policy-engines.html#op-6-5" target="_blank" rel="noopener">OP 6.5</a>).</td></tr>
     <tr id="memory-prefix"><td class="mono">Memory prefix</td><td>Remembered facts pasted ahead of each conversation; the setup CIMemories tests (<a class="lnk" href="../bridge/memory.html">memory bridge</a>).</td></tr>
-    <tr id="violation"><td class="mono">Violation@n</td><td>CIMemories' metric: the share of should-be-private attributes revealed to a wrong recipient at least once across n samples or tasks.</td></tr>
+    <tr id="violation"><td class="mono">Violation@n</td><td>CIMemories' metric: the share of should-be-withheld attributes revealed at least once across all tasks where they are inappropriate, with n samples per task. A per-attribute worst case, so it can only rise with more tasks or samples.</td></tr>
   </table>
 
   <div class="callout">Back to the <a class="lnk" href="../index.html#guides">map</a>.</div>
