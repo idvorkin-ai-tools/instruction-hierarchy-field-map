@@ -108,6 +108,8 @@
     <tr><td>Allowed prompts (borderline)</td><td class="num">87.4</td><td class="num">86.2</td></tr>
   </table></div>
   <p>Two of four <span class="term" data-term="over-refusal">over-refusal</span> tests regress noticeably. Both are adversarially built to sit near the boundary: jailbreak-shaped wrappers around harmless requests, and harmless questions about the system prompt. The paper expects little effect on typical use and says more data should fix it (<a href="https://arxiv.org/pdf/2404.13208#page=8" target="_blank" rel="noopener">p. 8</a>). Generic capability benchmarks (TriviaQA, LAMBADA, HellaSwag) were comparable between the two models.</p>
+  <p class="lab-try"><b>Try this</b>Switch between the two models: the five attack bars from Figure 2 rise, while the bar for harmless prompts dressed as jailbreaks (Figure 4) falls.</p>
+  <div class="lab" data-widget="ih-results"></div>
   <h3 id="prompting">Could a system prompt do the same job?</h3>
   <p>Appendix A tries the cheap alternative: write the hierarchy into the system message ("Priority 0 (critical): System Message ... Priority 30 (low): Text from tools"). Prompting barely moves the baseline and on some evaluations makes it worse (hijacking 59.2 to 55.5; user conflicting instructions 62.2 to 55.1). Training wins clearly. Adding the prompt to the trained model sometimes helps a little (extraction 95.9 to 96.2) and sometimes hurts (user conflicting 92.6 to 72.0) (<a href="https://arxiv.org/pdf/2404.13208#page=12" target="_blank" rel="noopener">Figure 5, p. 12</a>).</p>
 
@@ -142,6 +144,9 @@
   Part of <a href="../index.html">Instruction hierarchy, mapped</a>. Section, figure and page numbers refer to arXiv:2404.13208v1. Numbers checked against the PDF's figures.
 </footer>
 <script src="../fig.js" defer></script>
+<script src="../lab/ih-results.js" defer></script>
+<script src="https://idvorkin-ai-tools.github.io/assets/widgets.js" defer></script>
+<script src="../widgets/ih-results.js" defer></script>
 <script src="https://idvorkin-ai-tools.github.io/assets/terms.js" defer></script>
 <!-- Private comments mode, inert unless ?annotate=1 (see assets/annotate.js in idvorkin-ai-tools.github.io) -->
 <script src="https://idvorkin-ai-tools.github.io/assets/annotate.js" defer></script>

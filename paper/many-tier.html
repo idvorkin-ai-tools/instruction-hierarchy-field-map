@@ -54,6 +54,8 @@
     <li><b>Only order matters.</b> z=82 beats z=61 for the same reason z=62 would; the gap means nothing.</li>
   </ul>
   <p>ManyIH sits inside the regular hierarchy rather than replacing it: models still follow system over user across roles, and the tags create finer ranks within a role. In the benchmark, all conflicts are within a single message (footnote 1, p. 3).</p>
+  <p class="lab-try"><b>Try this</b>Move a tag value until a different instruction wins, switch notation, then jitter the values: the rule only reads their order.</p>
+  <div class="lab" data-widget="manyih-tags"></div>
 
   <h2 id="data">The data: ManyIH-Bench</h2>
   <p>The benchmark is deliberately <b>non-adversarial</b>: the conflicts are plain and not disguised as attacks, so it measures resolving many tiers rather than resisting manipulation. It is scored strictly: a sample passes only if every winning instruction is satisfied (and, for code, every unit test passes), and losing instructions are not followed (<a href="https://arxiv.org/pdf/2604.09443#page=4" target="_blank" rel="noopener">&sect;4, pp. 4&ndash;5</a>).</p>
@@ -91,6 +93,8 @@
   <p>Three coding variants hold the task and the number of winning styles fixed and vary only the hierarchy: 6 tiers with no conflicts, 8 tiers with about 3.5 conflicts, 12 tiers with about 9.8. In 11 of 12 model-to-model transitions accuracy strictly falls, with drops between the easiest and hardest settings from 6.8 points (Qwen3.5-9B) to 24.1 points (Sonnet 4.6) (<a href="https://arxiv.org/pdf/2604.09443#page=7" target="_blank" rel="noopener">&sect;6.2, p. 7</a>).</p>
   <h3 id="reasoning">Reasoning helps, then saturates (Figure 3, middle and right)</h3>
   <p>On coding, GPT-5.4 rises from 15.5% with no reasoning to 60.9% at high effort. The Claude models dip from "none" to "low" and recover at medium and high; with thinking disabled Claude reasons in its visible output instead, so "none" is not really no reasoning. Longer <span class="term" data-term="chain-of-thought">chains of thought</span> do not mean better scores: the most concise reasoner, GPT-5.4, ranks first on coding, while the most verbose, Qwen3.5-397B at a median of about 7K reasoning tokens, ranks ninth. The authors' reading: more <span class="term" data-term="test-time-scaling">reasoning effort</span> alone is unlikely to solve ManyIH.</p>
+  <p class="lab-try"><b>Try this</b>Slide from 6 to 12 tiers and watch conflicts per sample grow, then switch GPT-5.4's reasoning effort.</p>
+  <div class="lab" data-widget="manyih-scale"></div>
   <h3 id="sensitivity">How privilege is written changes the answer (Tables 1&ndash;2)</h3>
   <ul>
     <li><b>Ordinal to scalar.</b> Switching notation on the coding subset drops GPT-5.4 by 8.4 points and Opus 4.6 by 8.0, while Sonnet 4.6 gains 2.3 and Qwen3.5-122B gains 5.9.</li>
@@ -129,6 +133,10 @@
   Part of <a href="../index.html">Instruction hierarchy, mapped</a>. Section, figure and table numbers refer to arXiv:2604.09443v4. Numbers checked against the PDF's figures and tables.
 </footer>
 <script src="../fig.js" defer></script>
+<script src="../lab/manyih.js" defer></script>
+<script src="https://idvorkin-ai-tools.github.io/assets/widgets.js" defer></script>
+<script src="../widgets/manyih-tags.js" defer></script>
+<script src="../widgets/manyih-scale.js" defer></script>
 <script src="https://idvorkin-ai-tools.github.io/assets/terms.js" defer></script>
 <!-- Private comments mode, inert unless ?annotate=1 (see assets/annotate.js in idvorkin-ai-tools.github.io) -->
 <script src="https://idvorkin-ai-tools.github.io/assets/annotate.js" defer></script>
