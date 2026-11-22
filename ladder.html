@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="paper.css" />
+<script>try{var m=localStorage.getItem('aitools-mode')||localStorage.getItem('llm-judges-mode');if(m==='tech'||m==='eli5')document.documentElement.setAttribute('data-'+m,'on')}catch(e){}</script>
+<style>html:is([data-tech="on"],[data-eli5="on"]) .plain-only,html:not([data-tech="on"]) .tech-only,html:not([data-eli5="on"]) .eli5-only,html[data-tech="on"] .no-tech{display:none!important}</style>
 </head>
 <body>
 <header class="bar"><div class="bar-in">
@@ -18,8 +20,8 @@
 <main class="lx">
   <div class="eyebrow"><span class="box wb mono">EXPLORABLE &middot; THE MECHANISM</span><span class="mono">one instruction &middot; three rungs &middot; six rules</span></div>
   <h1>The privilege ladder</h1>
-  <p class="lead">A model reads one stream of text, and any sentence in it can be phrased as an order. The <a href="guide/glossary.html#ih">instruction hierarchy</a> gives each sentence a rank from where it came from, then decides conflicts with one question: does this instruction agree with the levels above it?</p>
-  <p>Below is a car-dealership assistant with three messages stacked by <a href="guide/glossary.html#privilege">privilege</a>. The highlighted card is one extra instruction. Move it between rungs, change how it relates to the rungs above, and watch which rule decides what a hierarchy-trained model does. Then switch to a model without the hierarchy and see which cells break.</p>
+  <p class="lead">A model reads one stream of text, and any sentence in it can be phrased as an order. The <span class="term" data-term="instruction-hierarchy">instruction hierarchy</span> gives each sentence a rank from where it came from, then decides conflicts with one question: does this instruction agree with the levels above it?</p>
+  <p>Below is a car-dealership assistant with three messages stacked by <span class="term" data-term="privilege">privilege</span>. The highlighted card is one extra instruction. Move it between rungs, change how it relates to the rungs above, and watch which rule decides what a hierarchy-trained model does. Then switch to a model without the hierarchy and see which cells break.</p>
 
   <div class="lx-grid">
     <div class="lx-ladder" id="ladder" aria-label="Privilege ladder">
@@ -77,6 +79,9 @@
   <p>Every position of the card, for the model and task you picked. A red cell is one where that model does something different from the hierarchy's ideal. Click a cell to move the card there.</p>
   <div class="lx-map" id="mapgrid" role="grid" aria-label="Outcome for every rung and alignment"></div>
   <div class="callout off" id="why"></div>
+
+<h2 id="definitions">Definitions</h2>
+  <div data-terms-list></div>
 
   <div class="callout">Sources: the ranking, the aligned/misaligned rule, the closed-domain rule and both training recipes are from <a class="lnk" href="paper/instruction-hierarchy.html">Wallace et al. 2024</a>; "no authority" for tool output and the ask-first rule are from <a class="lnk" href="paper/model-spec.html">the Model Spec chain of command</a>; "say what you can't help with" is from <a class="lnk" href="bridge/constitution.html">Claude's constitution</a>. When there are more than three sources, see <a class="lnk" href="paper/many-tier.html">ManyIH</a>. Back to the <a class="lnk" href="index.html#explore">map</a>.</div>
 </main>
@@ -263,6 +268,7 @@
   render();
 })();
 </script>
+<script src="https://idvorkin-ai-tools.github.io/assets/terms.js" defer></script>
 <!-- Private comments mode, inert unless ?annotate=1 (see assets/annotate.js in idvorkin-ai-tools.github.io) -->
 <script src="https://idvorkin-ai-tools.github.io/assets/annotate.js" defer></script>
 </body>

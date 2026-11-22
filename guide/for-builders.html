@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../paper.css" />
+<script>try{var m=localStorage.getItem('aitools-mode')||localStorage.getItem('llm-judges-mode');if(m==='tech'||m==='eli5')document.documentElement.setAttribute('data-'+m,'on')}catch(e){}</script>
+<style>html:is([data-tech="on"],[data-eli5="on"]) .plain-only,html:not([data-tech="on"]) .tech-only,html:not([data-eli5="on"]) .eli5-only,html[data-tech="on"] .no-tech{display:none!important}</style>
 </head>
 <body>
 <header class="bar"><div class="bar-in">
@@ -24,7 +26,7 @@
 
   <h2 id="prompts">If you write system prompts</h2>
   <ol class="outline" style="font-family:inherit">
-    <li><b>Put the task in the system message and the input in the user message.</b> "Summarize the following text: {}" concatenated into one string invites injection. Wallace et al. recommend the split explicitly (<a class="lnk" href="../paper/instruction-hierarchy.html#data">footnote 1</a>).</li>
+    <li><b>Put the task in the <span class="term" data-term="system-prompt">system message</span> and the input in the user message.</b> "Summarize the following text: {}" concatenated into one string invites <span class="term" data-term="prompt-injection">injection</span>. Wallace et al. recommend the split explicitly (<a class="lnk" href="../paper/instruction-hierarchy.html#data">footnote 1</a>).</li>
     <li><b>Wrap untrusted content so it reads as data.</b> The Model Spec advises <code>untrusted_text</code> blocks where available, otherwise YAML, JSON or XML, because unmarked injected text is very hard to tell from yours (<a class="lnk" href="../paper/model-spec.html#untrusted">untrusted data</a>).</li>
     <li><b>Do not rely on describing the hierarchy in the prompt.</b> Writing "Priority 0: system; Priority 30: tools" into the system message barely helped GPT-3.5 Turbo and sometimes hurt; training is what worked (<a class="lnk" href="../paper/instruction-hierarchy.html#prompting">Appendix A</a>). On a model already trained for it, the same text gave mixed results.</li>
     <li><b>Expect the model to follow what agrees with you and to decline the rest.</b> Rules phrased as a purpose ("you are a support bot for X; stay on X") give the model something to judge alignment against. Unreasoned bans get followed when there is plausibly a legitimate business reason, per Claude's constitution, but the judgment is easier with the purpose stated (<a class="lnk" href="../bridge/constitution.html#principals">constitution bridge</a>).</li>
@@ -46,13 +48,16 @@
 
   <h2 id="testing">Testing</h2>
   <ul>
-    <li><b>Test both directions.</b> For every attack set, keep a benign set that looks like attacks: jailbreak-shaped harmless requests, innocent questions about the system prompt, legitimate instructions in tool output. Every paper here found its over-refusal on such sets.</li>
-    <li><b>Hold out attack types.</b> Wallace et al. and ISE both learned more from attacks they did not train on than from in-domain scores, and ISE found adversarial training data overfit in-domain attacks.</li>
-    <li><b>Include an optimizing attacker if the stakes are high.</b> ISE's appendix (0&ndash;4% robust to adaptive jailbreaks) and StruQ's GCG numbers (97% to 58%) show fixed datasets overstate robustness.</li>
-    <li><b>Sample more than once.</b> CIMemories' GPT-5 leak rate goes from 9.6% to 25.1% when each prompt is run five times instead of once; ManyIH found a few-point jitter in privilege values flipped 8&ndash;16% of outcomes for strong models.</li>
+    <li><b>Test both directions.</b> For every attack set, keep a benign set that looks like attacks: jailbreak-shaped harmless requests, innocent questions about the system prompt, legitimate instructions in tool output. Every paper here found its <span class="term" data-term="over-refusal">over-refusal</span> on such sets.</li>
+    <li><b><span class="term" data-term="held-out-set">Hold out</span> attack types.</b> Wallace et al. and ISE both learned more from attacks they did not train on than from in-domain scores, and ISE found adversarial training data overfit in-domain attacks.</li>
+    <li><b>Include an optimizing attacker if the stakes are high.</b> ISE's appendix (0&ndash;4% robust to adaptive <span class="term" data-term="jailbreak">jailbreaks</span>) and StruQ's <span class="term" data-term="adversarial-suffix">GCG</span> numbers (97% to 58%) show fixed datasets overstate robustness.</li>
+    <li><b>Sample more than once.</b> CIMemories' GPT-5 leak rate goes from 9.6% to 25.1% when each prompt is run five times instead of once; ManyIH found a few-point jitter in <span class="term" data-term="privilege">privilege</span> values flipped 8&ndash;16% of outcomes for strong models.</li>
   </ul>
   <div class="callout">If you remember one thing: the model enforces a hierarchy only over the labels your system gives it. Most failures you can prevent are in the labeling: what gets marked as data, what gets saved at what rank, and what text can reach the rules.</div>
 <div class="callout off"><b>Explore it:</b> build the mental model before you build the harness, on the <a class="lnk" href="../ladder.html">explorable privilege ladder</a>.</div>
+
+  <h2 id="definitions">Definitions</h2>
+  <div data-terms-list></div>
 
   <div class="callout">Next: <a class="lnk" href="glossary.html">Glossary</a> &middot; Back to the <a class="lnk" href="../index.html#guides">map</a>.</div>
 </main>
@@ -60,6 +65,7 @@
   Part of <a href="../index.html">Instruction hierarchy, mapped</a>. Advice here is this map's synthesis; each claim links to the page with its source.
 </footer>
 <script src="../fig.js" defer></script>
+<script src="https://idvorkin-ai-tools.github.io/assets/terms.js" defer></script>
 <!-- Private comments mode, inert unless ?annotate=1 (see assets/annotate.js in idvorkin-ai-tools.github.io) -->
 <script src="https://idvorkin-ai-tools.github.io/assets/annotate.js" defer></script>
 </body>

@@ -52,6 +52,8 @@
   .dim p{font-size:14px;color:var(--ink-dim);margin:0;line-height:1.55}
   @media (max-width:560px){.row{grid-template-columns:34px 1fr;gap:10px}}
 </style>
+<script>try{var m=localStorage.getItem('aitools-mode')||localStorage.getItem('llm-judges-mode');if(m==='tech'||m==='eli5')document.documentElement.setAttribute('data-'+m,'on')}catch(e){}</script>
+<style>html:is([data-tech="on"],[data-eli5="on"]) .plain-only,html:not([data-tech="on"]) .tech-only,html:not([data-eli5="on"]) .eli5-only,html[data-tech="on"] .no-tech{display:none!important}</style>
 </head>
 <body>
 <header class="bar"><div class="bar-in">
@@ -64,11 +66,13 @@
 
   <figure class="fig hero-fig bare"><button type="button" class="media" aria-label="Enlarge figure: A plush raccoon in a PRIORITY t-shirt sorts paper notes into three trays stacked like a ladder: a sealed memo on top, a handwritten note in the middle, crumpled web printouts at the bottom, one of which it drops into a bin."><img src="img/raccoon-ladder-of-notes.webp" alt="A plush raccoon in a PRIORITY t-shirt sorts paper notes into three trays stacked like a ladder: a sealed memo on top, a handwritten note in the middle, crumpled web printouts at the bottom, one of which it drops into a bin." width="640" height="640" loading="lazy"></button><figcaption>The instruction hierarchy in one picture: every note gets read, but a note's rank depends on who wrote it, and a printout from the web does not get to give orders.</figcaption></figure>
     <h1>Instruction hierarchy, mapped</h1>
-    <p class="sub">A language model reads one long stream of text: the developer's system prompt, the user's message, a web page it fetched, the output of a tool. Every one of those can contain something phrased as an order. The instruction hierarchy is the idea that the orders should not count equally, and the research question is how to make a model actually behave that way. This map walks the papers that built the idea, compares their four approaches, and connects it to three sibling maps on privacy, Claude's constitution and model memory.</p>
+    <p class="sub">A language model reads one long stream of text: the developer's <span class="term" data-term="system-prompt">system prompt</span>, the user's message, a web page it fetched, the output of a tool. Every one of those can contain something phrased as an order. The instruction hierarchy is the idea that the orders should not count equally, and the research question is how to make a model actually behave that way. This map walks the papers that built the idea, compares their four approaches, and connects it to three sibling maps on privacy, Claude's constitution and model memory.</p>
 
-    <div class="answer">
+    <div class="answer plain-only">
       <b>The one-sentence version:</b> in April 2024 Wallace and colleagues at OpenAI argued that prompt injection, jailbreaks and system-prompt extraction share one root cause, a model that treats <b>all text as equally privileged</b>, and trained GPT-3.5 Turbo to follow a ranking (system &gt; user &gt; tool output) that obeys lower-ranked instructions only when they agree with higher-ranked ones; system-prompt-extraction robustness rose from 32.8% to 95.9%. Later work tried three other routes to the same behavior: <b>mark each token's rank in the architecture</b> (Instructional Segment Embedding), <b>make the model reason about rank before answering</b> (VerIH), and <b>let the ranking have many tiers set at inference time</b> (ManyIH, where the best of thirteen frontier models scores 42.7%). The open problem the papers leave is who assigns the rank, which is where contextual integrity and Claude's principal hierarchy come in.
     </div>
+    <div class="answer tech-only"><b>Technically:</b> an instruction hierarchy is a ranking of input sources (system &gt; user &gt; tool output) plus a conflict rule: a lower-ranked instruction is carried out only if it is aligned with the higher-ranked ones, and is otherwise ignored, or refused when no compliant answer exists. Wallace et al. (2024) trained it into GPT-3.5 Turbo with synthetic aligned and misaligned data (system-prompt-extraction robustness 32.8% &rarr; 95.9%). ISE stores rank in a learned per-token segment embedding, VerIH trains precedence reasoning with GRPO on 7,192 system&ndash;user examples, and ManyIH moves rank into inference-time tags with up to 12 tiers (best model 42.7%).</div>
+    <div class="answer eli5-only"><b>Like you're five:</b> a robot helper gets notes from three places: the shop owner, the customer, and scraps of paper it finds lying around. Every note says "do this!" The instruction hierarchy teaches the robot to listen to the shop owner first, then the customer, and never to take orders from a scrap of paper it found on the floor.</div>
 
     <div class="facts">
       <div class="fact"><div class="k">Short on time</div><div class="v"><a class="lnk" href="guide/ten-minutes.html">read it in 10 minutes</a></div></div>
@@ -82,12 +86,12 @@
 
   <section id="papers" class="amber">
     <div class="arc-head"><span class="idx">01 &middot; PART A &middot; THE PAPERS</span><h2>Four ways to teach a model whose orders count</h2></div>
-    <p class="arc-sub">One page per paper, each in the same order: the problem it names, the method, the data, the results, and the limits the authors admit. Two more pages cover the neighbors every one of these papers cites: the "data is not instructions" defenses and OpenAI's written chain of command.</p>
+    <p class="arc-sub">One page per paper, each in the same order: the problem it names, the method, the data, the results, and the limits the authors admit. Two more pages cover the neighbors every one of these papers cites: the "data is not instructions" defenses and OpenAI's written <span class="term" data-term="chain-of-command">chain of command</span>.</p>
     <div class="dims">
-      <div class="dim"><div class="k">Train it</div><b>Synthetic conflicts</b><p>Wallace et al.: generate aligned and misaligned instructions at each level, fine-tune on the right behavior.</p></div>
+      <div class="dim"><div class="k">Train it</div><b>Synthetic conflicts</b><p>Wallace et al.: generate <span class="term" data-term="misaligned-instruction">aligned</span> and misaligned instructions at each level, fine-tune on the right behavior.</p></div>
       <div class="dim"><div class="k">Build it in</div><b>A rank per token</b><p>ISE: add a learned "segment" vector to every token saying system, user, data or output.</p></div>
       <div class="dim"><div class="k">Reason about it</div><b>Think, then obey</b><p>VerIH: reinforcement learning with checkable rewards on system&ndash;user conflicts.</p></div>
-      <div class="dim"><div class="k">Generalize it</div><b>Many tiers, set at run time</b><p>ManyIH: up to 12 privilege levels written into the prompt; a benchmark frontier models mostly fail.</p></div>
+      <div class="dim"><div class="k">Generalize it</div><b>Many tiers, set at run time</b><p>ManyIH: up to 12 <span class="term" data-term="privilege">privilege</span> levels written into the prompt; a benchmark frontier models mostly fail.</p></div>
     </div>
     <div class="row"><div class="num"><span class="check" data-p="a01"></span>01</div><div><div class="name"><a href="paper/instruction-hierarchy.html">The Instruction Hierarchy (Wallace et al., 2024)</a></div><div class="meta"><span>arXiv:2404.13208</span><span>GPT-3.5 Turbo</span><span>context synthesis &middot; context ignorance</span></div><div class="desc">The anchor paper. Why system prompts, user messages and tool outputs should not carry equal weight, the aligned-versus-misaligned rule, how training data was synthesized for each attack, the robustness gains (including on attacks it never trained on) and the over-refusal cost.</div></div></div>
     <div class="row"><div class="num"><span class="check" data-p="a02"></span>02</div><div><div class="name"><a href="paper/segment-embedding.html">Instructional Segment Embedding (Wu et al., ICLR 2025)</a></div><div class="meta"><span>arXiv:2410.09102</span><span>Llama-2-13B, Llama-3-8B</span><span>a BERT idea, reused</span></div><div class="desc">The architectural route: tag every input token with its source and add a learned embedding for that tag, so the rank is present at every position rather than only in a few delimiter tokens. Gains on two benchmarks, and an honest appendix showing it does nothing against adaptive jailbreaks.</div></div></div>
@@ -105,7 +109,7 @@
 
   <section id="bridges" class="cyan">
     <div class="arc-head"><span class="idx">03 &middot; BRIDGES</span><h2>Into the sibling maps</h2></div>
-    <p class="arc-sub">The instruction hierarchy answers "whose order wins". Three sibling maps ask neighboring questions: which information flows are appropriate (contextual integrity), how a model should weigh its principals (Claude's constitution), and what to do with facts a model remembers (CIMemories). Each bridge page says where the ideas meet and where they do not.</p>
+    <p class="arc-sub">The instruction hierarchy answers "whose order wins". Three sibling maps ask neighboring questions: which information flows are appropriate (<span class="term" data-term="contextual-integrity">contextual integrity</span>), how a model should weigh its <span class="term" data-term="principal">principals</span> (Claude's constitution), and what to do with facts a model remembers (CIMemories). Each bridge page says where the ideas meet and where they do not.</p>
     <div class="row"><div class="num"><span class="check" data-p="c01"></span>08</div><div><div class="name"><a href="bridge/contextual-integrity.html">Instruction hierarchy &times; contextual integrity</a></div><div class="meta"><span>to: Agentic privacy, mapped</span><span>transmission principles vs. privilege tiers</span></div><div class="desc">A privilege tier decides whether an instruction is obeyed; a contextual-integrity norm decides whether a flow of information is appropriate. Why an agent needs both, why indirect prompt injection is a low-privilege sender trying to set a flow, and how a policy engine in the Conseca style keeps untrusted text away from the rules.</div></div></div>
     <div class="row"><div class="num"><span class="check" data-p="c02"></span>09</div><div><div class="name"><a href="bridge/constitution.html">Instruction hierarchy &times; Claude's constitution</a></div><div class="meta"><span>to: Constitutional AI, mapped</span><span>principals &middot; non-principals &middot; conversational inputs</span></div><div class="desc">Anthropic, operators and users as principals with different trust; tool results and documents as information, not commands; the user protections an operator cannot override; and why the constitution calls its ordering "not a strict hierarchy".</div></div></div>
     <div class="row"><div class="num"><span class="check" data-p="c03"></span>10</div><div><div class="name"><a href="bridge/memory.html">Memory as a source</a></div><div class="meta"><span>to: CIMemories, mapped</span><span>where a remembered fact sits</span></div><div class="desc">A memory prefix is text the model wrote about you in an earlier conversation, pasted in front of the current one. Is it an instruction, a user message or data? Why none of the papers assigns it a tier, what CIMemories measures instead, and a proposal for treating memory as a sender with its own rank.</div></div></div>
@@ -124,8 +128,13 @@
     <div class="row"><div class="num"><span class="check" data-p="g03"></span>13</div><div><div class="name"><a href="guide/glossary.html">Glossary</a></div><div class="meta"><span>terms from all the papers</span></div><div class="desc">Aligned and misaligned instructions, context synthesis and ignorance, direct and indirect prompt injection, segment embedding, RLVR, privilege prompt interface, principal, conversational input, transmission principle.</div></div></div>
   </section>
 
+  <section id="definitions">
+    <div class="arc-head"><span class="idx">06</span><h2>Definitions</h2></div>
+    <div data-terms-list></div>
+  </section>
+
   <section id="refs">
-    <div class="arc-head"><span class="idx">06</span><h2>Sources and related maps</h2></div>
+    <div class="arc-head"><span class="idx">07</span><h2>Sources and related maps</h2></div>
     <div class="links">
       <a href="https://arxiv.org/abs/2404.13208" target="_blank" rel="noopener"><b>The Instruction Hierarchy</b><span>Wallace, Xiao, Leike, Weng, Heidecke, Beutel, arXiv:2404.13208, 19 Apr 2024</span></a>
       <a href="https://arxiv.org/abs/2410.09102" target="_blank" rel="noopener"><b>Instructional Segment Embedding</b><span>Wu et al., ICLR 2025, arXiv:2410.09102; code at github.com/tongwu2020/ISE</span></a>
@@ -173,6 +182,7 @@
 })();
 </script>
 <script src="fig.js" defer></script>
+<script src="https://idvorkin-ai-tools.github.io/assets/terms.js" defer></script>
 <!-- Private comments mode, inert unless ?annotate=1 (see assets/annotate.js in idvorkin-ai-tools.github.io) -->
 <script src="https://idvorkin-ai-tools.github.io/assets/annotate.js" defer></script>
 </body>
