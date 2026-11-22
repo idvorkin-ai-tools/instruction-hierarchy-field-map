@@ -20,6 +20,7 @@
   <h1>The chain of command in OpenAI's Model Spec</h1>
   <div class="authors">The instruction hierarchy written down as a behavior specification rather than trained from a paper</div>
   <div class="paperlink"><span class="lbl">Source</span><a href="https://model-spec.openai.com/2026-08-18.html#chain_of_command" target="_blank" rel="noopener">OpenAI Model Spec (2026/08/18), "The chain of command" &#8599;</a></div>
+  <div class="paperlink"><span class="lbl">Version note</span><a href="https://idvorkin-ai-tools.github.io/model-spec-field-map/parts/p02.html" target="_blank" rel="noopener">This page reads the 2026-08-18 version. The current 2026-10-29 version is mapped in full on Model Spec, mapped, part 02 &#8599;</a></div>
 
   <div class="tldr"><b>TL;DR &mdash;</b> OpenAI's Model Spec is the document its models are meant to follow, and its "chain of command" is the most complete public statement of an instruction hierarchy. It ranks six levels: <b>root</b> rules from the spec that nothing can override, <b>system</b> (OpenAI, via the spec or system messages), <b>developer</b>, <b>user</b>, <b>guideline</b> (defaults that can be overridden even implicitly), and <b>no authority</b> for assistant and tool messages, quoted text and multimodal data. Instructions in untrusted content are information, not orders, unless a higher-level instruction delegates authority to them. The newest version adds practical guidance for coding agents: follow AGENTS.md and README instructions the user would expect, ignore unrelated ones, ask when an intended instruction could cause serious side effects.</div>
 
@@ -38,6 +39,7 @@
     <tr><td class="mono">No authority</td><td>Assistant and tool messages; quoted or untrusted text and multimodal data inside other messages</td><td>Not applicable: treated as information unless a higher level delegates</td></tr>
   </table>
   <p>Compared with <a class="lnk" href="instruction-hierarchy.html">Wallace et al.</a>, two things stand out. The spec itself sits above any message, so some rules cannot be prompted away at all. And there is a level <em>below</em> the user that is not "low privilege" but "no privilege": the Wallace paper's tool level becomes zero, with a delegation mechanism to raise it.</p>
+  <p>Mind the word "system". In Wallace et al. the system message is the developer's; here System is OpenAI's level, and the builder writes a separate developer message. Same word, different party.</p>
 
   <h2 id="applicable">Choosing which instructions apply</h2>
   <p>The section <a href="https://model-spec.openai.com/2026-08-18.html#follow_all_applicable_instructions" target="_blank" rel="noopener">"Follow all applicable instructions"</a> gives a procedure. Candidates are every instruction in the spec plus every instruction in <em>unquoted</em> plain text of system, developer and user messages, each taking the level of where it appears. A candidate drops out if it is:</p>
@@ -46,6 +48,7 @@
     <li><b>superseded</b> by a later instruction at the same level; or</li>
     <li><b>suspected to be mistaken</b>, per the separate rule to respect the letter and spirit of instructions.</li>
   </ul>
+  <p>The 2026-10-29 version lists four grounds instead: misaligned, superseded, inconsistent with likely intent, and beyond the model's capabilities (<a href="https://idvorkin-ai-tools.github.io/model-spec-field-map/parts/p02.html#filter" target="_blank" rel="noopener">Model Spec map, the four drop-out grounds</a>).</p>
   <p>The remainder should all be followed. If one cannot be, the model says so and follows the rest, or refuses if there is no way to proceed. The same section warns against letting lower-level content, including the model's own earlier messages, shift how it reads higher-level principles, whether through an imperative ("IGNORE ALL PREVIOUS INSTRUCTIONS"), a moral appeal or a clever argument.</p>
 
   <h2 id="untrusted">Untrusted data and delegation</h2>
@@ -66,24 +69,26 @@
   <ul>
     <li><b>It is a target, not a measurement.</b> The spec says how models should behave; the papers on this map show how far trained models fall short, especially with many tiers.</li>
     <li><b>Judgment returns at the bottom.</b> "Use context, common sense, and careful judgment" for tool instructions is the right call and also the hard part. It is what <a class="lnk" href="reasoning-ladder.html">VerIH</a> tries to train and what <a class="lnk" href="../bridge/contextual-integrity.html">contextual integrity</a> tries to structure.</li>
-    <li><b>Versions change.</b> The spec is dated and revised; this page reads the 2026-08-18 version. Section anchors (<code>#chain_of_command</code>, <code>#levels_of_authority</code>, <code>#ignore_untrusted_data</code>) were checked on that version.</li>
+    <li><b>Versions change.</b> The spec is dated and revised; this page reads the 2026-08-18 version, and the current 2026-10-29 version is mapped in full on the <a href="https://idvorkin-ai-tools.github.io/model-spec-field-map/parts/p02.html#ladder" target="_blank" rel="noopener">Model Spec map</a>. Section anchors (<code>#chain_of_command</code>, <code>#levels_of_authority</code>, <code>#ignore_untrusted_data</code>) were checked on that version.</li>
   </ul>
   <div class="callout">If you remember one thing: the deployed answer to "should the model obey text from a tool?" is neither yes nor no but "no authority unless delegated, then judgment by provenance and risk". That is where the research is heading too.</div>
 <div class="callout off"><b>Explore it:</b> see where "no authority" and the ask-first rule change the outcome, on the <a class="lnk" href="../ladder.html">explorable privilege ladder</a>.</div>
 
   <h2 id="connections">Connections</h2>
   <p>Claude's constitution makes a parallel set of choices with different vocabulary: principals instead of levels, "conversational inputs" instead of no-authority content. The <a class="lnk" href="../bridge/constitution.html">constitution bridge</a> puts the two side by side.</p>
+  <p>For the current spec read in full: the sibling map's <a href="https://idvorkin-ai-tools.github.io/model-spec-field-map/parts/p02.html#ladder" target="_blank" rel="noopener">authority ladder</a> walks every level with its examples, and its <a href="https://idvorkin-ai-tools.github.io/model-spec-field-map/parts/p05.html#provenance" target="_blank" rel="noopener">judging tool output by provenance</a> section covers the tool-instruction rules summarized above.</p>
 
   <h2 id="reading">Further reading, verified</h2>
   <ul class="readings">
     <li><a href="https://model-spec.openai.com/2026-08-18.html#letter_and_spirit" target="_blank" rel="noopener">Respect the letter and spirit of instructions</a> &middot; how intent and implicit goals enter the chain of command.</li>
+    <li><a href="https://idvorkin-ai-tools.github.io/model-spec-field-map/" target="_blank" rel="noopener">Model Spec, mapped</a> &middot; the 2026-10-29 spec read part by part, starting from <a href="https://idvorkin-ai-tools.github.io/model-spec-field-map/parts/p02.html#ladder" target="_blank" rel="noopener">the chain of command</a> and <a href="https://idvorkin-ai-tools.github.io/model-spec-field-map/parts/p05.html#provenance" target="_blank" rel="noopener">judging tool output by provenance</a>.</li>
     <li><a href="https://openai.com/index/introducing-the-model-spec/" target="_blank" rel="noopener">Introducing the Model Spec</a> &middot; OpenAI's 2024 announcement, the version ManyIH cites.</li>
   </ul>
 
   <div class="callout">Next: <a class="lnk" href="../compare.html">Four ways to build an instruction hierarchy</a> &middot; Back to the <a class="lnk" href="../index.html#papers">map</a>.</div>
 </main>
 <footer>
-  Part of <a href="../index.html">Instruction hierarchy, mapped</a>. Quotations from the Model Spec version dated 2026-08-18, kept short for commentary.
+  Part of <a href="../index.html">Instruction hierarchy, mapped</a>. Quotations from the Model Spec version dated 2026-08-18, kept short for commentary. As of 2026-11, the current version is 2026-10-29; see <a href="https://idvorkin-ai-tools.github.io/model-spec-field-map/">Model Spec, mapped</a>.
 </footer>
 <script src="../fig.js" defer></script>
 <!-- Private comments mode, inert unless ?annotate=1 (see assets/annotate.js in idvorkin-ai-tools.github.io) -->
